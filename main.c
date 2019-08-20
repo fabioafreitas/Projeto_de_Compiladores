@@ -1,9 +1,8 @@
  #include <stdio.h>
  #include <stdlib.h>
- #define N 100000000
+ #define N 100 //alterar o tamanho deste DEFINE depois
 
-//static char entrada[N] = "S(K(K))(KS)(SK)KK(SK)K\0";
-static char entrada[N] = "SKKK\0";
+
 
 // Estrutura de um noh da memoria
 typedef struct reg {
@@ -20,15 +19,6 @@ node criarNode(char tipo) {
 	novo->esq = novo->dir = NULL;
 	novo->tipo = tipo;
 	return novo;
-} 
-
-//
-void erd (node r) {
-   if (r != NULL) {
-      erd (r->esq);
-      printf ("%c", r->tipo);
-      erd (r->dir); 
-   }
 }
 
 void printGrafo (node r) {
@@ -39,54 +29,90 @@ void printGrafo (node r) {
    }
 }
 
-// retorna a raiz do grafo gerado
-// por hora este método só gera grafos
-// de strings simples (sem parenteses)
-node gerarGrafo(char* string, int index) {
-	node root = criarNode(' ');
-	static int casoBase = 1;
-	int i = index;
+//Procedimento que recebe duas variaveis, uma que aponta para
+//um array e outra que aponta para um inteiro com a posicao do
+//array a ser usada. O procedimento termina quando atinge a
+//primeira posicao depois dos parenteses.
+void casaParenteses(char* string, int* p) {
+    int paren = 1;
+    int c = *p;
+    while (paren != 0) {
+        char x = string[c];
+        if(x == '(') {
+            paren++;
+            c++;
+        }
+        else if(x == ')') {
+            paren--;
+            c++;
+        }
+        else {
+            c++;
+        }
+    }
+    *p = c;
+}
+
+//Recebe a String a ser convertida, o index de inicio
+//da string, e o index de onde a string termina.
+//Converte esta string para grafo e
+//retorna o node raiz do grafo gerado
+node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
+	node root = criarNode('R');
 	
-	//caso base
-	node combinador = criarNode(string[i++]);
+	// primeira folha
+	node combinador = criarNode(string[indexAtual++]);
 	root->esq = combinador;
 	combinador->esq = NULL;
 	
-	while(string[i] != '\0') {
-		node arroba = criarNode('@');
-		node combinador2 = criarNode(string[i++]);
-		arroba->dir = combinador2;
-
-		arroba->esq = root->esq;
-		root->esq = arroba;
+	while(indexAtual < indexFinal) {
+		if(string[indexAtual] != '(') {
+			node combinador = criarNode(string[indexAtual++]);
+			node arroba = criarNode('@');
+			arroba->dir = combinador;
+			arroba->esq = root->esq;
+			root->esq = arroba;
+		}
+		else {
+			// proxima posição após o (
+			indexAtual++; 
+			
+			 //posição de início da substring
+			int inicio = indexAtual;
+			
+			/* Este comando irá buscar a próxima posição após ) do parenteses atual.
+			o valor de indexAtual é alterado via ponteiro*/
+			casaParenteses(string, &indexAtual);
+			
+			// para indicar exatamamente a posição do fecha parenteses
+			int fim = indexAtual-1;
+			
+			/* cria um subgrafo com a string de dentro dos parenteses */
+			node subgrafo = gerarGrafoAux(string, inicio, fim);
+			
+			node arroba = criarNode('@');
+			arroba->dir = subgrafo->esq;
+			arroba->esq = root->esq;
+			root->esq = arroba;
+		}
 	}
 
 	return root;
 }
 
-int main(int num, char *args[]) {
-	/*node root = criarNode(' ');
-	node nc = criarNode('@');
-	node nb = criarNode('@');
-	node na = criarNode('@');
-	node c = criarNode('K');
-	node b = criarNode('K');
-	node a = criarNode('K');
-	node s = criarNode('S');
-	
-	root->esq = nc;
-	nc->esq = nb;
-	nb->esq = na;
-	na->esq = s;
-	
-	nc->dir = c;
-	nb->dir = b;
-	na->dir = a;
+node gerarGrafo(char* string) {
+	int lenght = 0;
+	while(string[lenght] != '\0') 
+		lenght++;
+	return gerarGrafoAux(string, 0, lenght);
+}
+
+int main() {
+	static char entrada[N] = "S(KK)(KS)(SK)KK(SK)K\0";
+	//static char entrada[N] = "SKKK\0";
+	//static char entrada[N] = "S(KK)KK(SK)\0";
+
+	node root = gerarGrafo(entrada);
 	printGrafo(root);
-	printf("\n");*/
-	
-	node r = gerarGrafo(entrada, 0);
-	printGrafo(r);
-	
 	return 0;
 }
