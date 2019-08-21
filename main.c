@@ -1,8 +1,11 @@
  #include <stdio.h>
  #include <stdlib.h>
- #define N 100 //alterar o tamanho deste DEFINE depois
+ #define N 1000 //alterar o tamanho deste DEFINE depois
 
-
+//static char entrada[N] = "S(KK)(KS)(SK)KK(SK)K\0";
+//static char entrada[N] = "SKKK\0";
+//static char entrada[N] = "S(KK)KK(SK)\0";
+static char entrada[N] = "S((SKKK)KK(SK(KS))KK\0";
 
 // Estrutura de um noh da memoria
 typedef struct reg {
@@ -61,9 +64,18 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
 	node root = criarNode('R');
 	
 	// primeira folha
-	node combinador = criarNode(string[indexAtual++]);
-	root->esq = combinador;
-	combinador->esq = NULL;
+  if(string[indexAtual] == '(') {
+    indexAtual++; 
+    int inicio = indexAtual;
+    casaParenteses(string, &indexAtual);
+    int fim = indexAtual-1;
+    node subgrafo = gerarGrafoAux(string, inicio, fim);
+
+  } else {
+    node combinador = criarNode(string[indexAtual++]);
+    root->esq = combinador;
+    combinador->esq = NULL;
+  }
 	
 	while(indexAtual < indexFinal) {
 		if(string[indexAtual] != '(') {
@@ -101,18 +113,17 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
 }
 
 node gerarGrafo(char* string) {
+	printf("teste");
 	int lenght = 0;
 	while(string[lenght] != '\0') 
 		lenght++;
+  	//printf("%i", lenght);
 	return gerarGrafoAux(string, 0, lenght);
 }
 
 int main() {
-	static char entrada[N] = "S(KK)(KS)(SK)KK(SK)K\0";
-	//static char entrada[N] = "SKKK\0";
-	//static char entrada[N] = "S(KK)KK(SK)\0";
-
 	node root = gerarGrafo(entrada);
 	printGrafo(root);
-	return 0;
+	printf("a");
+  return 0;
 }
