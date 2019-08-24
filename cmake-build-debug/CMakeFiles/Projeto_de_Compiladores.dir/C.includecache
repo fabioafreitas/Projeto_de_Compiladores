@@ -29,6 +29,8 @@ stdio.h
 -
 stdlib.h
 -
+time.h
+-
 headers/heap.h
 C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/heap.h
 headers/grafo.h

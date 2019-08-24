@@ -82,7 +82,7 @@ void formatarString(char* string) {
 //Converte esta string para grafo e
 //retorna o node raiz do grafo gerado
 node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
-    node root = criarNode(' ');
+    node root = criarNode('R');
 
     // Folha a esquerda
     node combinador = criarNode(string[indexAtual++]);
@@ -119,7 +119,7 @@ node gerarGrafo(char* string) {
     int lenght = 0;
     while(string[lenght] != '\0')
         lenght++;
-    return gerarGrafoAux(string, 0, lenght)->esq;
+    return gerarGrafoAux(string, 0, lenght);
 }
 
 #endif //PROJETO_DE_COMPILADORES_GRAFO_H
