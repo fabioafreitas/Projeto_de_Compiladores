@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/combinadores.h
+stdio.h
+-
+stdlib.h
+-
+heap.h
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/heap.h
+
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/grafo.h
+stdio.h
+-
+stdlib.h
+-
+heap.h
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/heap.h
+
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/heap.h
+
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/main.c
+stdio.h
+-
+stdlib.h
+-
+headers/heap.h
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/heap.h
+headers/grafo.h
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/grafo.h
+headers/combinadores.h
+C:/Users/fabio/Desktop/Projeto_de_Compiladores/headers/combinadores.h
+
