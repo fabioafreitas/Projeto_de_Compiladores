@@ -14,6 +14,6 @@ int main(int n, char* args[]) {
     formatarString(entrada);
     node root = gerarGrafo(entrada);
     printf("Resultado: %c\n", reduzirGrafo(root));
-    printf("Tempo = %lf\n", (double)(clock()/CLOCKS_PER_SEC));
+    printf("Tempo = %.10lf\n", (clock()/(float)CLOCKS_PER_SEC));
     return 0;
 }
