@@ -1,3 +1,0 @@
-C:/Users/fabio/Desktop/PCompiladores/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/fabio/Desktop/PCompiladores/cmake-build-debug/CMakeFiles/Projeto_de_Compiladores.dir
-C:/Users/fabio/Desktop/PCompiladores/cmake-build-debug/CMakeFiles/edit_cache.dir
