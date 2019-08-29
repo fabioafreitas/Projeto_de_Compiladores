@@ -13,6 +13,28 @@
 #include <stdlib.h>
 #include "heap.h"
 
+static node combinadores[26];
+
+//Aloca os combinadores que sao utilizados
+//na construcao e reducao do grafo
+//So eh necessaria uma unidade de cada,
+//pois eles sao reutilizados, reduzindo
+//o gasto de memoria da heap
+void alocarCombinadores() {
+    combinadores['S'] = alocarNode('S');
+    combinadores['K'] = alocarNode('K');
+    combinadores['I'] = alocarNode('I');
+    combinadores['B'] = alocarNode('B');
+    combinadores['C'] = alocarNode('C');
+    combinadores['D'] = alocarNode('D');
+    combinadores['E'] = alocarNode('E');
+    combinadores['F'] = alocarNode('F');
+}
+
+node atribuirCombinador(char combinador) {
+    return combinadores[combinador];
+}
+
 //Exibe o grafo no console, escrito em preordem
 void printGrafo (node r) {
     if (r != NULL) {
@@ -77,23 +99,24 @@ void formatarString(char* string) {
     }
 }
 
+
+
 //Recebe a String a ser convertida, o index de inicio
 //da string, e o index de onde a string termina.
 //Converte esta string para grafo e
 //retorna o node raiz do grafo gerado
 node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
-    node root = criarNode('R');
+    node root = alocarNode(' ');
 
     // Folha a esquerda
-    node combinador = criarNode(string[indexAtual++]);
+    node combinador = atribuirCombinador(string[indexAtual++]);
     root->esq = combinador;
-    combinador->esq = NULL;
 
     // Folhas a direita
     while(indexAtual < indexFinal) {
         if(string[indexAtual] != '(') {
-            node combinador = criarNode(string[indexAtual++]);
-            node arroba = criarNode('@');
+            node combinador = atribuirCombinador(string[indexAtual++]);
+            node arroba = alocarNode('@');
             arroba->dir = combinador;
             arroba->esq = root->esq;
             root->esq = arroba;
@@ -104,7 +127,7 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
             casaParenteses(string, &indexAtual);
             int fim = indexAtual-1;
             node subgrafo = gerarGrafoAux(string, inicio, fim);
-            node arroba = criarNode('@');
+            node arroba = alocarNode('@');
             arroba->dir = subgrafo->esq;
             arroba->esq = root->esq;
             root->esq = arroba;
@@ -116,6 +139,7 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
 //Recebe a string a ser convertida em grafo
 //e retorna o node raiz do grafo gerado
 node gerarGrafo(char* string) {
+    alocarCombinadores();
     int lenght = 0;
     while(string[lenght] != '\0')
         lenght++;
