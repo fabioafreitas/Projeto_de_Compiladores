@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "heap.h"
-#include "garbage-collection.h"
 
 static node combinadores[26];
 
@@ -107,7 +106,7 @@ void formatarString(char* string) {
 //Converte esta string para grafo e
 //retorna o node raiz do grafo gerado
 node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
-    node root = alocarNode(' ');
+    node root = alocarNode('R');
 
     // Folha a esquerda
     node combinador = atribuirCombinador(string[indexAtual++]);

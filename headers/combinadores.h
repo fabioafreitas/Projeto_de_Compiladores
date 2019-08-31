@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "heap.h"
-#include "garbage-collection.h"
 
 int tamanhoGrafo(node grafo) {
     int size = -1; //desconsiderando o nó raiz
