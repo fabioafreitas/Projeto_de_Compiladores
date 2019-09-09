@@ -12,6 +12,8 @@
 #ifndef PROJETO_DE_COMPILADORES_HEAP_H
 #define PROJETO_DE_COMPILADORES_HEAP_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #define H 1000000 //Tamanho da Heap
 
 // Estrutura de um noh da memoria

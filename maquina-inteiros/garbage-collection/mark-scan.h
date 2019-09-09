@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../heap.h"
+#include "../../maquina-strings/heap.h"
 
 void markScan() {
 

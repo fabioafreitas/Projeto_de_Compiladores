@@ -8,6 +8,7 @@
 // de forma mais eficiente. Após alguma redução, é necessário
 // adicionar o novo pedaço do caminho à lista.
 //
+// INFELIZMENTE NAO É EFICIENTE ;-;
 
 #ifndef PCOMPILADORES_COMBINADORES2_H
 #define PCOMPILADORES_COMBINADORES2_H
@@ -55,21 +56,29 @@ list montarCaminhoCH(node grafo) {
     return lista;
 }
 
-//TODO completar este combinador
+//Retorna a ultima celula da lista encadeada
+//funcao utilizada durante a reducao do grafo
+list ultimoElementoLista(list lista) {
+    list aux = lista;
+    while(aux->prox != NULL) {
+        aux = aux->prox;
+    }
+    return aux;
+}
+
 void reduzK2(list caminho) {
-    //Aplicando a redução ao grafo
-    caminho->prox->prox->prox->prox->conteudo->esq = caminho->prox->prox->conteudo->dir;
-
-    //Indicando que agora os @ são nodes Livres TODO
-    caminho->prox->conteudo->status = 'L';
+    //Indicando que agora os @ são nodes Livres
     caminho->prox->prox->conteudo->status = 'L';
+    caminho->prox->prox->prox->conteudo->status = 'L';
 
-    //Atualizando o caminho de CH2 TODO
-    list aux = montarCaminhoCH(caminho->prox->prox->conteudo->dir);
-    aux->prox = caminho->prox->prox->prox->prox;
-    caminho->prox = aux->prox;
+    node argumentoA = caminho->prox->prox->conteudo->dir;
 
-    printf("a");
+    //Aplicando a redução ao grafo
+    caminho->prox->prox->prox->prox->conteudo->esq = argumentoA;
+
+    //Atualizando o caminho de CH2
+    caminho->prox->conteudo = argumentoA;
+    caminho->prox->prox = caminho->prox->prox->prox->prox;
 }
 
 void reduzS2(list caminho) {
@@ -80,29 +89,34 @@ void reduzS2(list caminho) {
     arroba1->esq = arroba2;
     arroba1->dir = arroba3;
 
-    arroba2->esq = caminho->prox->prox->conteudo->dir; //Argumento A
-    arroba2->dir = caminho->prox->prox->prox->prox->conteudo->dir; //Argumento C
+    node argumentoA = caminho->prox->prox->conteudo->dir;
+    node argumentoB = caminho->prox->prox->prox->conteudo->dir;
+    node argumentoC = caminho->prox->prox->prox->prox->conteudo->dir;
 
-    arroba3->esq = caminho->prox->prox->prox->conteudo->dir; //Argumento B
-    arroba3->dir = caminho->prox->prox->prox->prox->conteudo->dir; //Argumento B
+    arroba2->esq = argumentoA;
+    arroba2->dir = argumentoC;
+
+    arroba3->esq = argumentoB;
+    arroba3->dir = argumentoC;
+
+    //Indicando que agora os @ são nodes Livres
+    caminho->prox->prox->conteudo->status = 'L';
+    caminho->prox->prox->prox->conteudo->status = 'L';
+    caminho->prox->prox->prox->prox->conteudo->status = 'L';
 
     //Aplicando a redução ao grafo
     caminho->prox->prox->prox->prox->prox->conteudo->esq = arroba1;
 
-    //Indicando que agora os @ são nodes Livres
-    caminho->prox->conteudo->status = 'L';
-    caminho->prox->prox->conteudo->status = 'L';
-    caminho->prox->prox->prox->conteudo->status = 'L';
-
     //Atualizando o caminho de CH2
-    list aux = montarCaminhoCH(arroba1);
-    aux->prox->prox->prox->prox = caminho->prox->prox->prox->prox->prox;
-    caminho->prox = aux->prox;
+    list caminhoReducao = montarCaminhoCH(arroba1); //Caminho CH2 da redução do grafo
+    list ultimoElemento = ultimoElementoLista(caminhoReducao); //ultimo elemento do caminhoNovo
+    ultimoElemento->prox = caminho->prox->prox->prox->prox->prox;
+    caminho->prox = caminhoReducao->prox;
 }
 
 void reduzirGrafo2(node grafo) {
     list caminho = montarCaminhoCH(grafo); //Caminho de Church Rosser 2
-    while(caminho->prox->prox != NULL) {
+    while(caminho->prox->prox->prox != NULL) {
         char combinador = caminho->prox->conteudo->tipo;
         switch(combinador) {
             case 'K':
@@ -111,22 +125,9 @@ void reduzirGrafo2(node grafo) {
             case 'S':
                 reduzS2(caminho);
                 break;
-                /* case 'I': reduzI(grafo);
-                     break;
-                 case 'B': reduzB(grafo);
-                     break;
-                 case 'C': reduzC(grafo);
-                     break;
-                 case 'D': reduzD(grafo);
-                     break;
-                 case 'E': reduzE(grafo);
-                     break;
-                 case 'F': reduzF(grafo);
-                     break;*/
             default:
                 break;
         }
-        //TODO checar se é necessário fazer "caminho->prox = caminho->prox->prox"
     }
 }
 
