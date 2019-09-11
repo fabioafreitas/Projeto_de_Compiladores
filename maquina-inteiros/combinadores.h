@@ -212,11 +212,22 @@ void reduzY(node grafo) {
     arroba2->dir = argumentoA;
     arroba2->esq = atribuirToken('Y');
 
+    //Outra forma de reduzir
+    //node arroba1 = alocarNode(ARROBA);
+    //arroba1->esq = aux->esq->dir;
+    //arroba1->dir = arroba1;
+
     aux->esq = arroba1;
 }
 
 /*##########  OPERADORES ARITIMÉTICOS E LÓGICOS #########*/
 
+node avaliarExpressao(node argumento) {
+    node subgrafo = alocarNode(EMPTY);
+    subgrafo->esq = argumento;
+    reduzirGrafo(subgrafo);
+    return subgrafo->esq;
+}
 
 void reduzSoma(node grafo) {
     int size = tamanhoGrafo(grafo);
@@ -226,20 +237,12 @@ void reduzSoma(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
@@ -256,20 +259,12 @@ void reduzSubtracao(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
@@ -286,20 +281,12 @@ void reduzMultiplicacao(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
@@ -316,20 +303,12 @@ void reduzDivisao(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
@@ -373,26 +352,18 @@ void reduzMenorQue(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
 
-    if(a < b) reduzTrue(grafo);
-    else reduzFalse(grafo);
+    if(a < b) aux->esq = tokens[-1*TRUE];
+    else aux->esq = tokens[-1*FALSE];
 }
 
 void reduzMaiorQue(node grafo) {
@@ -403,26 +374,18 @@ void reduzMaiorQue(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
 
-    if(a > b) reduzTrue(grafo);
-    else reduzFalse(grafo);
+    if(a > b) aux->esq = tokens[-1*TRUE];
+    else aux->esq = tokens[-1*FALSE];
 }
 
 void reduzIgualdade(node grafo) {
@@ -433,32 +396,24 @@ void reduzIgualdade(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoB;
-        reduzirGrafo(subgrafo);
-        argumentoB = subgrafo->esq;
-    }
+    if(argumentoB->tipo == ARROBA)
+        argumentoB = avaliarExpressao(argumentoB);
 
     node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA) {
-        node subgrafo = alocarNode(EMPTY);
-        subgrafo->esq = argumentoA;
-        reduzirGrafo(subgrafo);
-        argumentoA = subgrafo->esq;
-    }
+    if(argumentoA->tipo == ARROBA)
+        argumentoA = avaliarExpressao(argumentoA);
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
 
-    if(a == b) reduzTrue(grafo);
-    else reduzFalse(grafo);
+    if(a == b) aux->esq = tokens[-1*TRUE];
+    else aux->esq = tokens[-1*FALSE];
 }
 
 void reduzirGrafo(node grafo) {
     while(grafo->esq->tipo == ARROBA) {
-        printGrafo(grafo->esq);
-        printf("\n");
+        //printGrafo(grafo->esq);
+        //printf("\n\n");
         int combinador = buscaCombinador(grafo);
         switch(combinador) {
             case K: reduzK(grafo);
@@ -492,6 +447,10 @@ void reduzirGrafo(node grafo) {
             case MAIORQUE: reduzMaiorQue(grafo);
                 break;
             case IGUALDADE: reduzIgualdade(grafo);
+                break;
+            case TRUE: reduzTrue(grafo);
+                break;
+            case FALSE: reduzFalse(grafo);
                 break;
             default:
                 break;

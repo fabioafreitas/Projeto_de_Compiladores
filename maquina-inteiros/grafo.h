@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "heap.h"
 
 #define ARROBA -64
@@ -34,7 +35,7 @@
 #define IGUALDADE -61
 #define EMPTY -100 //Usado como Root do grafo, representa o espaco vazio ' '
 
-static node tokens[256];
+static node tokens[128];
 
 //Aloca os tokens que sao utilizados
 //na construcao e reducao do grafo
@@ -63,6 +64,7 @@ void alocarTokens() {
     tokens[-1 * IGUALDADE] = alocarNode(IGUALDADE);
 }
 
+//só pode ser usada na geração do grafo
 node atribuirToken(char tipo) {
     if(tipo < '0' || tipo > '9')
         return tokens[tipo];
@@ -73,6 +75,7 @@ node atribuirToken(char tipo) {
 //Exibe o grafo no console, escrito em preordem
 void printGrafo (node r) {
     if (r != NULL) {
+        int numero = 0;
         char token;
         switch (r->tipo) {
             case ARROBA: token = '@'; break;
@@ -92,9 +95,10 @@ void printGrafo (node r) {
             case MENORQUE: token = '<'; break;
             case MAIORQUE: token = '>'; break;
             case IGUALDADE: token = '='; break;
-            default: token = '0'+r->tipo; break;
+            default: numero = 1; break;
         }
-        printf ("%c", token);
+        if(numero == 1) printf ("%i", r->tipo);
+        else printf ("%c", token);
         printGrafo (r->esq);
         printGrafo (r->dir);
     }
@@ -155,6 +159,14 @@ void formatarString(char* string) {
     }
 }
 
+//Adiciona um parametro ao grafo
+//Refebe o grafo e o parametro a ser adicionado
+void adicionarParametro(node grafo, int param) {
+    node arroba = alocarNode(ARROBA);
+    arroba->dir = alocarNode(param);;
+    arroba->esq = grafo->esq;
+    grafo->esq = arroba;
+}
 
 
 //Recebe a String a ser convertida, o index de inicio
@@ -165,15 +177,23 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
     node root = alocarNode(EMPTY);
 
     // Folha a esquerda
-    node combinador = atribuirToken(string[indexAtual++]);
-    root->esq = combinador;
+    node token = atribuirToken(string[indexAtual++]);
+    root->esq = token;
 
     // Folhas a direita
     while(indexAtual < indexFinal) {
         if(string[indexAtual] != '(') {
-            node combinador = atribuirToken(string[indexAtual++]);
+            //node token;
+            /*if(string[indexAtual] >= '0' || string[indexAtual] <= '9') {
+                int numero = receberNumero(string, &indexAtual);
+                token = alocarNode(numero);
+            }
+            else {
+                token = atribuirToken(string[indexAtual++]);
+            }*/
+            node token = atribuirToken(string[indexAtual++]);
             node arroba = alocarNode(ARROBA);
-            arroba->dir = combinador;
+            arroba->dir = token;
             arroba->esq = root->esq;
             root->esq = arroba;
         }

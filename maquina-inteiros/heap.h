@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define H 1000000 //Tamanho da Heap
+#define H 500000000 //Tamanho da Heap
 
 typedef struct reg {
     int tipo;
@@ -24,7 +24,7 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-static noh heap[H];
+static noh* heap;
 static int heapIndex = 0;
 
 //Atribui um caracter para o tipo (@ ou combinador)
