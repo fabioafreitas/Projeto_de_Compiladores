@@ -1,12 +1,9 @@
 //
 // Created by fabio on 23/08/2019.
 //
-// Struct que armazena um célula
-// utilizada na heap
+// Armazena a Struct das celulas da heap
 //
-// Funcoes que gerenciam a heap
-//
-// Aloca os combinadores base
+// Armazena o algoritmo de garbage collection, mark scan
 //
 
 #ifndef PROJETO_DE_COMPILADORES_HEAP_H
@@ -14,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define H 500000000 //Tamanho da Heap
+#define H 100000000 //Tamanho da Heap
 
 typedef struct reg {
     int tipo;
@@ -24,33 +21,47 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-static noh* heap;
-static int heapIndex = 0;
+static noh* freeList;
+
+//Cria uma lista de celulas livres
+//as celulas podem ser utilizadas
+//a partir do ponteiro freeList
+void inicializarHeap() {
+    int aux = 0;
+    freeList = (noh*) malloc(sizeof(noh));
+    freeList->esq = NULL;
+    while(aux < H) {
+        noh* celula = (noh*) malloc(sizeof(noh));
+        celula->esq = freeList->esq;
+        celula->gb = 'L';
+        freeList->esq = celula;
+        aux++;
+    }
+}
+
+//Devolve as celulas em desuso para a freeList
+void markScan() {
+    //TODO fazer algoritmo mark scan
+}
 
 //Atribui um caracter para o tipo (@ ou combinador)
 //Atribui o estado de 'O' ao node, indicanod qu está ocupado
 //Atribui NULL, para os ponteiros esquerda e direita
 //Retorna um dos nodes da heap
 node alocarNode(int tipo) {
-    if(heapIndex == H) {
-        printf("Heap Cheia\n");
-        exit(0);
+    if(freeList->esq == NULL) { //Heap Cheia
+        markScan();
     }
-    heap[heapIndex].tipo = tipo;
-    heap[heapIndex].gb = 'O';
-    heap[heapIndex].esq = heap[heapIndex].dir = NULL;
-    return &heap[heapIndex++];
+    //Alocando celula da freeList
+    node celulaAlocada = freeList->esq;
+    celulaAlocada->gb = 'O';
+    celulaAlocada->tipo = tipo;
+    celulaAlocada->esq = celulaAlocada->dir = NULL;
+
+    //Reorganizando o ponteiro da freeList
+    freeList->esq = freeList->esq->esq;
+    return celulaAlocada;
 }
 
-//Atribui o estado 'L' a todos
-//os nodes da heap, indicando
-//que estão Livres para serem
-//alocados
-void inicializarHeap() {
-    int i = 0;
-    while(i < H) {
-        heap[i++].gb = 'O';
-    }
-}
 
 #endif //PROJETO_DE_COMPILADORES_HEAP_H

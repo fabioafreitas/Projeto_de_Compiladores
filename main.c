@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+/// ESCOLHER APENAS UM DOS INCLUDES ABAIXO
 //#include "maquina-inteiros/cheney.h"
-//#include "maquina-inteiros/mark-scan.h"
+#include "maquina-inteiros/mark-scan.h"
 //#include "maquina-inteiros/fenichel-yochelson.h"
-#include "maquina-inteiros/sem-garbage-collection.h"
+//#include "maquina-inteiros/sem-garbage-collection.h"
 
 
 #define N 10000000  //Tamanho da String
@@ -19,15 +21,16 @@ static char fib1[N] = "S(K(SII))(S(S(KS)K)(K(SII)))(S(K(S(S(S(KI)(S(S(K<)I)(K2))
 static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
 
 int main(int n, char* args[]) {
-    heap = (noh*) malloc(sizeof(noh*) * H);
-
-    node root = gerarGrafo(fib1);
+    inicializarHeap();
+    printf("tam = %i",tamanhoGrafo(freeList));
+    printf("\nTempo = %.15lf\n", (clock()/(float)CLOCKS_PER_SEC));
+    /*node root = gerarGrafo(fib1);
     adicionarParametro(root, atoi(args[1]) );
     reduzirGrafo(root);
 
     printf("Tempo = %.15lf\n", (clock()/(float)CLOCKS_PER_SEC));
     printf("Resultado = ");
     printGrafo(root->esq);
-    printf("\n");
+    printf("\n");*/
     return 0;
 }

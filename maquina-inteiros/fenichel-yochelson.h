@@ -5,7 +5,7 @@
 #ifndef PCOMPILADORES_CHENEY_H
 #define PCOMPILADORES_CHENEY_H
 
-#include "fenichel-yochelson/fenichel-yochelson.h.h"
+#include "fenichel-yochelson/fenichel-yochelson.h"
 #include "fenichel-yochelson/grafo.h"
 #include "fenichel-yochelson/combinadores.h"
 
