@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "maquina-inteiros/heap.h"
-#include "maquina-inteiros/grafo.h"
-#include "maquina-inteiros/combinadores.h"
+//#include "maquina-inteiros/cheney.h"
+//#include "maquina-inteiros/mark-scan.h"
+//#include "maquina-inteiros/fenichel-yochelson.h"
+#include "maquina-inteiros/sem-garbage-collection.h"
+
 
 #define N 10000000  //Tamanho da String
 
@@ -26,5 +28,6 @@ int main(int n, char* args[]) {
     printf("Tempo = %.15lf\n", (clock()/(float)CLOCKS_PER_SEC));
     printf("Resultado = ");
     printGrafo(root->esq);
+    printf("\n");
     return 0;
 }

@@ -1,8 +1,0 @@
-//
-// Created by fabio on 30/08/2019.
-//
-
-#ifndef PCOMPILADORES_CHENEY_H
-#define PCOMPILADORES_CHENEY_H
-
-#endif //PCOMPILADORES_CHENEY_H
