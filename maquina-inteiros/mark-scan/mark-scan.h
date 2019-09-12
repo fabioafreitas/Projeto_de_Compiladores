@@ -21,17 +21,19 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-static noh* freeList;
+static node heap;
+static node freeList;
 
 //Cria uma lista de celulas livres
 //as celulas podem ser utilizadas
 //a partir do ponteiro freeList
 void inicializarHeap() {
     int aux = 0;
-    freeList = (noh*) malloc(sizeof(noh));
+    heap = (node) malloc(sizeof(noh) * H);
+    freeList = (node) malloc(sizeof(noh));
     freeList->esq = NULL;
     while(aux < H) {
-        noh* celula = (noh*) malloc(sizeof(noh));
+        node celula = &heap[aux];
         celula->esq = freeList->esq;
         celula->gb = 'L';
         freeList->esq = celula;
@@ -41,8 +43,18 @@ void inicializarHeap() {
 
 //Devolve as celulas em desuso para a freeList
 void markScan() {
-    //TODO fazer algoritmo mark scan
+    int i = 0;
+    freeList->esq = NULL;
+    while(i < H) {
+        if(heap[i].gb == 'L') {
+            node celula = &heap[i];
+            celula->esq = freeList->esq;
+            freeList->esq = celula;
+        }
+    }
 }
+
+
 
 //Atribui um caracter para o tipo (@ ou combinador)
 //Atribui o estado de 'O' ao node, indicanod qu está ocupado
@@ -50,6 +62,7 @@ void markScan() {
 //Retorna um dos nodes da heap
 node alocarNode(int tipo) {
     if(freeList->esq == NULL) { //Heap Cheia
+        printf("\nChamando Garbage Collector");
         markScan();
     }
     //Alocando celula da freeList
@@ -63,5 +76,9 @@ node alocarNode(int tipo) {
     return celulaAlocada;
 }
 
-
+// Atribui o status Livre para
+// um node ja alocado
+void liberarNode(node celula) {
+    celula->gb = 'L';
+}
 #endif //PROJETO_DE_COMPILADORES_HEAP_H

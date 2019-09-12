@@ -24,13 +24,14 @@ int main(int n, char* args[]) {
     inicializarHeap();
     printf("tam = %i",tamanhoGrafo(freeList));
     printf("\nTempo = %.15lf\n", (clock()/(float)CLOCKS_PER_SEC));
-    /*node root = gerarGrafo(fib1);
-    adicionarParametro(root, atoi(args[1]) );
+    node root = gerarGrafo(fib1);
+//    adicionarParametro(root, atoi(args[1]) );
+    adicionarParametro(root, 5 );
     reduzirGrafo(root);
 
     printf("Tempo = %.15lf\n", (clock()/(float)CLOCKS_PER_SEC));
     printf("Resultado = ");
     printGrafo(root->esq);
-    printf("\n");*/
+    printf("\n");
     return 0;
 }

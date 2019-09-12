@@ -183,14 +183,6 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
     // Folhas a direita
     while(indexAtual < indexFinal) {
         if(string[indexAtual] != '(') {
-            //node token;
-            /*if(string[indexAtual] >= '0' || string[indexAtual] <= '9') {
-                int numero = receberNumero(string, &indexAtual);
-                token = alocarNode(numero);
-            }
-            else {
-                token = atribuirToken(string[indexAtual++]);
-            }*/
             node token = atribuirToken(string[indexAtual++]);
             node arroba = alocarNode(ARROBA);
             arroba->dir = token;
@@ -207,6 +199,8 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
             arroba->dir = subgrafo->esq;
             arroba->esq = root->esq;
             root->esq = arroba;
+
+            liberarNode(subgrafo);
         }
     }
     return root;

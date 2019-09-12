@@ -40,6 +40,10 @@ void reduzK(node grafo) {
         aux = aux->esq;
         size--;
     }
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     aux->esq = aux->esq->esq->dir; //argumento A
 }
 
@@ -64,6 +68,10 @@ void reduzS(node grafo) {
     arroba3->esq = aux->esq->esq->dir; //argumento B
     arroba3->dir = aux->esq->dir; //argumento C
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
+
     aux->esq = arroba1;
 }
 
@@ -75,6 +83,9 @@ void reduzI(node grafo) {
         aux = aux->esq;
         size--;
     }
+
+    liberarNode(aux->esq);
+
     aux->esq = aux->esq->dir; //argumento A
 }
 
@@ -95,6 +106,10 @@ void reduzB(node grafo) {
     arroba2->esq = aux->esq->esq->dir; //argumento B
     arroba2->dir = aux->esq->dir; //argumenro C
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
+
     aux->esq = arroba1;
 }
 
@@ -114,6 +129,10 @@ void reduzC(node grafo) {
     arroba1->dir = aux->esq->esq->dir; //argumento B
     arroba2->dir = aux->esq->dir; //argumento C
     arroba2->esq = aux->esq->esq->esq->dir; //argumento A
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
 
     aux->esq = arroba1;
 }
@@ -143,6 +162,11 @@ void reduzD(node grafo) {
     arroba3->esq = aux->esq->esq->dir; //argumento C
     arroba3->dir = aux->esq->dir; //argumento D
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
+    liberarNode(aux->esq->esq->esq->esq);
+
     aux->esq = arroba1;
 }
 
@@ -166,6 +190,11 @@ void reduzE(node grafo) {
 
     arroba3->esq = aux->esq->esq->dir; //argumento C
     arroba3->dir = aux->esq->dir; //argumento D
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
+    liberarNode(aux->esq->esq->esq->esq);
 
     aux->esq = arroba1;
 }
@@ -191,6 +220,11 @@ void reduzF(node grafo) {
     arroba3->esq = aux->esq->esq->esq->dir; //argumento B
     arroba3->dir = aux->esq->dir; //argumento D
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+    liberarNode(aux->esq->esq->esq);
+    liberarNode(aux->esq->esq->esq->esq);
+
     aux->esq = arroba1;
 }
 
@@ -212,10 +246,25 @@ void reduzY(node grafo) {
     arroba2->dir = argumentoA;
     arroba2->esq = atribuirToken('Y');
 
-    //Outra forma de reduzir
-    //node arroba1 = alocarNode(ARROBA);
-    //arroba1->esq = aux->esq->dir;
-    //arroba1->dir = arroba1;
+    liberarNode(aux->esq);
+
+    aux->esq = arroba1;
+}
+
+// Outra forma de reduzir o combinador Y
+void reduzY2(node grafo) {
+    int size = tamanhoGrafo(grafo);
+    node aux = grafo;
+    while(size > 2) {
+        aux = aux->esq;
+        size--;
+    }
+
+    node arroba1 = alocarNode(ARROBA);
+    arroba1->esq = aux->esq->dir;
+    arroba1->dir = arroba1;
+
+    liberarNode(aux->esq);
 
     aux->esq = arroba1;
 }
@@ -226,7 +275,10 @@ node avaliarExpressao(node argumento) {
     node subgrafo = alocarNode(EMPTY);
     subgrafo->esq = argumento;
     reduzirGrafo(subgrafo);
-    return subgrafo->esq;
+
+    node resposta = subgrafo->esq;
+    liberarNode(subgrafo);
+    return resposta;
 }
 
 void reduzSoma(node grafo) {
@@ -247,6 +299,9 @@ void reduzSoma(node grafo) {
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
     node resultado = alocarNode(a+b);
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
 
     aux->esq = resultado;
 }
@@ -270,6 +325,9 @@ void reduzSubtracao(node grafo) {
     int b = argumentoB->tipo;
     node resultado = alocarNode(a-b);
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     aux->esq = resultado;
 }
 
@@ -291,6 +349,9 @@ void reduzMultiplicacao(node grafo) {
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
     node resultado = alocarNode(a*b);
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
 
     aux->esq = resultado;
 }
@@ -319,6 +380,9 @@ void reduzDivisao(node grafo) {
 
     node resultado = alocarNode(a/b);
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     aux->esq = resultado;
 }
 
@@ -330,6 +394,10 @@ void reduzTrue(node grafo) {
         size--;
     }
     node argumentoA = aux->esq->esq->dir;
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     aux->esq = argumentoA;
 }
 
@@ -341,6 +409,10 @@ void reduzFalse(node grafo) {
         size--;
     }
     node argumentoB = aux->esq->dir;
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     aux->esq = argumentoB;
 }
 
@@ -361,6 +433,9 @@ void reduzMenorQue(node grafo) {
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
 
     if(a < b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];
@@ -384,6 +459,9 @@ void reduzMaiorQue(node grafo) {
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
 
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
+
     if(a > b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];
 }
@@ -405,6 +483,9 @@ void reduzIgualdade(node grafo) {
 
     int a = argumentoA->tipo;
     int b = argumentoB->tipo;
+
+    liberarNode(aux->esq);
+    liberarNode(aux->esq->esq);
 
     if(a == b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];

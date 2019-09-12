@@ -47,7 +47,7 @@ node alocarNode(int tipo) {
 //que estão Livres para serem
 //alocados
 void inicializarHeap() {
-    heap = (noh*) malloc(sizeof(noh*) * H);
+    heap = (noh*) malloc(sizeof(noh) * H);
     int i = 0;
     while(i < H) {
         heap[i++].gb = 'L';
