@@ -21,5 +21,6 @@ int main(int n, char* args[]) {
     printf("Tempo = %.5lf\n", (clock()/(float)CLOCKS_PER_SEC));
     printf("Resultado = ");
     printGrafo(root);
+    printf("\n");
     return 0;
 }
