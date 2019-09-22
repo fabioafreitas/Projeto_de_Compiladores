@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "constantes.h"
 #include "heap.h"
 
 //Cabecalho para permitir que os combinadores chamem a funcao reduzirGrafo
@@ -236,9 +237,19 @@ void reduzY2(node grafo) {
 /*##########  OPERADORES ARITIMÉTICOS E LÓGICOS #########*/
 
 node avaliarExpressao(node argumento) {
-    node subgrafo = alocarNode(EMPTY);
+    node subgrafo = alocarNode(ROOT);
+
+    //Empilhando Node da chamada recursiva
+    subgrafo->dir = rootGrafo->dir;
+    rootGrafo->dir = subgrafo;
+
+    //Avaliando Expressao
     subgrafo->esq = argumento;
     reduzirGrafo(subgrafo);
+
+    //Desempilhando Node da chamada recursiva
+    rootGrafo->dir = rootGrafo->dir->dir;
+
     return subgrafo->esq;
 }
 
@@ -425,51 +436,60 @@ void reduzIgualdade(node grafo) {
     else aux->esq = tokens[-1*FALSE];
 }
 
+//Este procedimento checa se dado um combinador
+//há memória suficiente para sua redução ocorrer
+//Se sim a função retorna 1, senão retorna 0
+int validarReducao(int combinador) {
+    int memoriaLivre = tamanhoFreeList();
+    switch(combinador) {
+        case K: case I: case TRUE: case FALSE:
+            return 1;
+        case D:
+            return memoriaLivre >= 4 ? 1 : 0;
+        case S: case E: case F:
+            return memoriaLivre >= 3 ? 1 : 0;
+        default:
+            //Todos os demais combinadores precisam
+            //de pelo menos 2 celulas para serem reduzidos
+            return memoriaLivre >= 2 ? 1 : 0;
+    }
+}
 
+//Este procedimento recebe um grafo
+//e retorna sua forma irredutível
 void reduzirGrafo(node grafo) {
     while(grafo->esq->tipo == ARROBA) {
-        //printGrafo(grafo->esq);
-        //printf("\n\n");
+
         int combinador = buscaCombinador(grafo);
+
+        //printGrafo(grafo->esq); printf("\n\n");
+        //printf("\nFreelist = %i",tamanhoFreeList());
+        if(validarReducao(combinador) == 0) {
+            //printf("\nChamando MarkScan");
+            markScan();
+        }
+
+
         switch(combinador) {
-            case K: reduzK(grafo);
-                break;
-            case S: reduzS(grafo);
-                break;
-            case I: reduzI(grafo);
-                break;
-            case B: reduzB(grafo);
-                break;
-            case C: reduzC(grafo);
-                break;
-            case D: reduzD(grafo);
-                break;
-            case E: reduzE(grafo);
-                break;
-            case F: reduzF(grafo);
-                break;
-            case Y: reduzY(grafo);
-                break;
-            case SOMA: reduzSoma(grafo);
-                break;
-            case SUBTRACAO: reduzSubtracao(grafo);
-                break;
-            case MULTIPLICACAO: reduzMultiplicacao(grafo);
-                break;
-            case DIVISAO: reduzDivisao(grafo);
-                break;
-            case MENORQUE: reduzMenorQue(grafo);
-                break;
-            case MAIORQUE: reduzMaiorQue(grafo);
-                break;
-            case IGUALDADE: reduzIgualdade(grafo);
-                break;
-            case TRUE: reduzTrue(grafo);
-                break;
-            case FALSE: reduzFalse(grafo);
-                break;
-            default:
-                break;
+            case K: reduzK(grafo); break;
+            case S: reduzS(grafo); break;
+            case I: reduzI(grafo); break;
+            case B: reduzB(grafo); break;
+            case C: reduzC(grafo); break;
+            case D: reduzD(grafo); break;
+            case E: reduzE(grafo); break;
+            case F: reduzF(grafo); break;
+            case Y: reduzY(grafo); break;
+            case SOMA: reduzSoma(grafo); break;
+            case SUBTRACAO: reduzSubtracao(grafo); break;
+            case MULTIPLICACAO: reduzMultiplicacao(grafo); break;
+            case DIVISAO: reduzDivisao(grafo); break;
+            case MENORQUE: reduzMenorQue(grafo); break;
+            case MAIORQUE: reduzMaiorQue(grafo); break;
+            case IGUALDADE: reduzIgualdade(grafo); break;
+            case TRUE: reduzTrue(grafo); break;
+            case FALSE: reduzFalse(grafo); break;
+            default: break;
         }
     }
 }

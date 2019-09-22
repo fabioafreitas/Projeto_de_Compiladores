@@ -11,10 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "constantes.h"
 
-#define H 1000000 //Tamanho da Heap
-#define CELULA_LIVRE   '0'
-#define CELULA_OCUPADA '1'
 
 typedef struct reg {
     int tipo;
@@ -44,6 +42,34 @@ void inicializarHeap() {
     }
 }
 
+
+int numeroCelulasGrafo(node grafo) {
+    if(grafo == NULL) return 0;
+    int x = 0;
+    if(grafo->tipo == ARROBA || grafo->tipo == ROOT) {
+        x = 1;
+        if(grafo->esq != NULL) {
+            x += numeroCelulasGrafo(grafo->esq);
+        }
+        if(grafo->dir != NULL) {
+            x += numeroCelulasGrafo(grafo->dir);
+        }
+    }
+    return x;
+}
+
+int tamanhoFreeList() {
+    int i = 0;
+    node aux = freeList;
+    while(aux->esq != NULL) {
+        aux = aux->esq;
+        i++;
+    }
+    return i;
+}
+
+
+
 //Este procedimento retorna a primeira celula da freelist, se houverem
 //celulas disponíveis, atribui um inteiro no campo Tipo desta celula
 //e seta os ponteiros esq e dir para NULL.
@@ -66,7 +92,7 @@ node alocarNode(int tipo) {
 //Este procedimento é a fase de mark, do algoritmo mark scan.
 //Ele marca todas as celulas conectadas ao grafo com '1'
 void marcarGrafo(node grafo) {
-    grafo->tipo = CELULA_OCUPADA;
+    grafo->gb = CELULA_OCUPADA;
     if(grafo->esq != NULL)
         marcarGrafo(grafo->esq);
     if(grafo->dir != NULL)
@@ -79,7 +105,7 @@ void varrerHeap() {
     int i = 0;
     freeList->esq = NULL;
     while(i < H) {
-        if(heap[i].tipo != CELULA_OCUPADA) {
+        if(heap[i].gb != CELULA_OCUPADA) {
             heap[i].esq = freeList->esq;
             freeList->esq = &heap[i];
         }
@@ -90,7 +116,7 @@ void varrerHeap() {
 void markScan() {
     int i = 0;
     while(i < H) {
-        heap[i++].tipo = CELULA_LIVRE;
+        heap[i++].gb = CELULA_LIVRE;
     }
     marcarGrafo(rootGrafo);
     varrerHeap();
@@ -98,6 +124,16 @@ void markScan() {
 
 //TODO checar se é possível que uma celula fora do grafo pode ser marcada com CELULA_OCUPADA
 //TODO salvar estado das reduções, para evitar que o markScan desaloque celulas que serão utilizadas nas reduções
+
+//TODO após gerar o grafo, as raizes à direita podem ser descartadas
+
+
+
+
+
+
+
+
 
 
 #endif //PROJETO_DE_COMPILADORES_HEAP_H

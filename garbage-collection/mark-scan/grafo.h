@@ -11,28 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "constantes.h"
 #include "heap.h"
-
-#define ARROBA -64
-#define K -75
-#define S -83
-#define I -73
-#define B -66
-#define C -67
-#define D -68
-#define E -69
-#define F -70
-#define Y -89
-#define SOMA -43
-#define SUBTRACAO -45
-#define MULTIPLICACAO -42
-#define DIVISAO -47
-#define TRUE -15
-#define FALSE -16
-#define MENORQUE -60
-#define MAIORQUE -62
-#define IGUALDADE -61
-#define EMPTY -100 //Usado como Root do grafo, representa o espaco vazio ' '
 
 static node tokens[128];
 
@@ -112,7 +92,7 @@ void printGrafo (node r) {
             case MENORQUE: token = '<'; break;
             case MAIORQUE: token = '>'; break;
             case IGUALDADE: token = '='; break;
-            case EMPTY: token = 'R'; break;
+            case ROOT: token = 'R'; break;
             default: numero = 1; break;
         }
         if(numero == 1) printf ("%i", r->tipo);
@@ -192,7 +172,8 @@ void adicionarParametro(node grafo, int param) {
 //Converte esta string para grafo e
 //retorna o node raiz do grafo gerado
 node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
-    node root = alocarNode(EMPTY);
+    node root = alocarNode(ROOT);
+    root->dir = NULL;
 
     // Folha a esquerda
     node token = atribuirToken(string[indexAtual++]);
