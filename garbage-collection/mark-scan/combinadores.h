@@ -14,7 +14,7 @@
 #include "heap.h"
 
 //Cabecalho para permitir que os combinadores chamem a funcao reduzirGrafo
-void reduzirGrafo(node grafo);
+void reduzirGrafo(node grafo, int chamadaRecursiva);
 
 int tamanhoGrafo(node grafo) {
     int size = -1; //desconsiderando o nó raiz
@@ -33,26 +33,30 @@ int buscaCombinador(node grafo) {
     return aux->tipo;
 }
 
-//K a b = a
-void reduzK(node grafo) {
+
+//Retorna um ponteiro, cujos elementos abaixo dele
+//são todos os argumentos da respectiva reduçãp
+//Recebe o grafo atual e a quantidade de elementos
+//desta redução
+node posicionarPonteiro(node grafo, int numArgs) {
     int size = tamanhoGrafo(grafo);
     node aux = grafo;
-    while(size > 3) {
+    while(size > numArgs+1) {
         aux = aux->esq;
         size--;
     }
+    return aux;
+}
 
+//K a b = a
+void reduzK(node grafo) {
+    node aux = posicionarPonteiro(grafo, 2);
     aux->esq = aux->esq->esq->dir; //argumento A
 }
 
 //S a b c = a c ( b c )
 void reduzS(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 4) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 3);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
     node arroba3 = alocarNode(ARROBA);
@@ -71,24 +75,13 @@ void reduzS(node grafo) {
 
 //I a = a
 void reduzI(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 2) {
-        aux = aux->esq;
-        size--;
-    }
-
+    node aux = posicionarPonteiro(grafo, 1);
     aux->esq = aux->esq->dir; //argumento A
 }
 
 //B a b c = a ( b c )
 void reduzB(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 4) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 3);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
 
@@ -103,12 +96,7 @@ void reduzB(node grafo) {
 
 //C a b c = a c b
 void reduzC(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 4) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 3);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
 
@@ -123,12 +111,7 @@ void reduzC(node grafo) {
 
 //D a b c d = a ( b d ) ( c d )
 void reduzD(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 5) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 4);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
     node arroba3 = alocarNode(ARROBA);
@@ -151,12 +134,7 @@ void reduzD(node grafo) {
 
 //E a b c d = a b ( c d )
 void reduzE(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 5) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 4);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
     node arroba3 = alocarNode(ARROBA);
@@ -175,12 +153,7 @@ void reduzE(node grafo) {
 
 //F a b c d = a ( b d ) c
 void reduzF(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 5) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 4);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
     node arroba3 = alocarNode(ARROBA);
@@ -197,13 +170,9 @@ void reduzF(node grafo) {
     aux->esq = arroba1;
 }
 
+//Y a = a ( Y a )
 void reduzY(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 2) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 1);
     node arroba1 = alocarNode(ARROBA);
     node arroba2 = alocarNode(ARROBA);
 
@@ -220,13 +189,7 @@ void reduzY(node grafo) {
 
 // Outra forma de reduzir o combinador Y
 void reduzY2(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 2) {
-        aux = aux->esq;
-        size--;
-    }
-
+    node aux = posicionarPonteiro(grafo, 1);
     node arroba1 = alocarNode(ARROBA);
     arroba1->esq = aux->esq->dir;
     arroba1->dir = arroba1;
@@ -236,30 +199,14 @@ void reduzY2(node grafo) {
 
 /*##########  OPERADORES ARITIMÉTICOS E LÓGICOS #########*/
 
-node avaliarExpressao(node argumento) {
-    node subgrafo = alocarNode(ROOT);
+node avaliarExpressao(node argumento);
 
-    //Empilhando Node da chamada recursiva
-    subgrafo->dir = rootGrafo->dir;
-    rootGrafo->dir = subgrafo;
-
-    //Avaliando Expressao
-    subgrafo->esq = argumento;
-    reduzirGrafo(subgrafo);
-
-    //Desempilhando Node da chamada recursiva
-    rootGrafo->dir = rootGrafo->dir->dir;
-
-    return subgrafo->esq;
-}
-
-void reduzSoma(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
+//Recebe o ponteiro do grafo, já posiciona acima dos
+//argumentos da redução e dois ponteiros para atribuir
+//os valores dos argumentos (ja avaliados)
+//Retorna 1, caso a atribuição ocorra com sucesso
+//Retorna 0, caso ocorra uma chamada ao garbage collection
+int atribuirArgumentos(node aux, int* argA, int* argB) {
     node argumentoB = aux->esq->dir;
     if(argumentoB->tipo == ARROBA)
         argumentoB = avaliarExpressao(argumentoB);
@@ -268,76 +215,65 @@ void reduzSoma(node grafo) {
     if(argumentoA->tipo == ARROBA)
         argumentoA = avaliarExpressao(argumentoA);
 
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
+    //Caso verdade, significa que a freelist esta quase vazia
+    if(argumentoB->tipo == ARROBA || argumentoA->tipo == ARROBA)
+        return 0;
+
+    //Significa que as avaliações ocorreram com sucesso
+    *argA = argumentoA->tipo;
+    *argB = argumentoB->tipo;
+    return 1;
+}
+
+//SOMA a b = eval(a) + eval(b)
+void reduzSoma(node grafo) {
+    node aux = posicionarPonteiro(grafo, 2);
+
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
+
     node resultado = alocarNode(a+b);
 
     aux->esq = resultado;
 }
 
+//SUBTRACAO a b = eval(a) - eval(b)
 void reduzSubtracao(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
-    node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
+    node aux = posicionarPonteiro(grafo, 2);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
     node resultado = alocarNode(a-b);
 
     aux->esq = resultado;
 }
 
+//MULTIPLICACAO a b = eval(a) * eval(b)
 void reduzMultiplicacao(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
-    node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
+    node aux = posicionarPonteiro(grafo, 2);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
     node resultado = alocarNode(a*b);
 
     aux->esq = resultado;
 }
 
+//DIVISAO a b = eval(a) / eval(b)
 void reduzDivisao(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
-    node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
+    node aux = posicionarPonteiro(grafo, 2);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
     if(b == 0) {
-        printf("Divisao por zero!\n");
+        printf("\nDivisao por zero!\n");
         exit(0);
     }
 
@@ -346,129 +282,98 @@ void reduzDivisao(node grafo) {
     aux->esq = resultado;
 }
 
+//TRUE a b = a
 void reduzTrue(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 2);
     node argumentoA = aux->esq->esq->dir;
 
     aux->esq = argumentoA;
 }
 
+//FALSE a b = B
 void reduzFalse(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 2);
     node argumentoB = aux->esq->dir;
 
     aux->esq = argumentoB;
 }
 
+//MENORQUE a b = (a < b)? TRUE : FALSE
 void reduzMenorQue(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
-    node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
+    node aux = posicionarPonteiro(grafo, 2);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
-
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
     if(a < b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];
 }
 
+//MAIORQUE a b = (a > b)? TRUE : FALSE
 void reduzMaiorQue(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
-    node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
+    node aux = posicionarPonteiro(grafo, 2);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
-
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
     if(a > b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];
 }
 
+//IGUALGADE a b = (a == b)? TRUE : FALSE
 void reduzIgualdade(node grafo) {
-    int size = tamanhoGrafo(grafo);
-    node aux = grafo;
-    while(size > 3) {
-        aux = aux->esq;
-        size--;
-    }
+    node aux = posicionarPonteiro(grafo, 2);
     node argumentoB = aux->esq->dir;
-    if(argumentoB->tipo == ARROBA)
-        argumentoB = avaliarExpressao(argumentoB);
 
-    node argumentoA = aux->esq->esq->dir;
-    if(argumentoA->tipo == ARROBA)
-        argumentoA = avaliarExpressao(argumentoA);
-
-    int a = argumentoA->tipo;
-    int b = argumentoB->tipo;
+    int a, b;
+    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
+    if(chamadaRecursiva == 0) return;
 
     if(a == b) aux->esq = tokens[-1*TRUE];
     else aux->esq = tokens[-1*FALSE];
 }
 
-//Este procedimento checa se dado um combinador
-//há memória suficiente para sua redução ocorrer
-//Se sim a função retorna 1, senão retorna 0
-int validarReducao(int combinador) {
-    int memoriaLivre = tamanhoFreeList();
-    switch(combinador) {
-        case K: case I: case TRUE: case FALSE:
-            return 1;
-        case D:
-            return memoriaLivre >= 4 ? 1 : 0;
-        case S: case E: case F:
-            return memoriaLivre >= 3 ? 1 : 0;
-        default:
-            //Todos os demais combinadores precisam
-            //de pelo menos 2 celulas para serem reduzidos
-            return memoriaLivre >= 2 ? 1 : 0;
-    }
+node avaliarExpressao(node argumento) {
+    node subgrafo = alocarNode(ROOT);
+
+    //Avaliando Expressao
+    subgrafo->esq = argumento;
+    reduzirGrafo(subgrafo, 1);
+
+    return subgrafo->esq;
 }
 
 //Este procedimento recebe um grafo
 //e retorna sua forma irredutível
-void reduzirGrafo(node grafo) {
+void reduzirGrafo(node grafo, int chamadaRecursiva) {
     while(grafo->esq->tipo == ARROBA) {
+//        printf("\n");
+//        printGrafo(rootGrafo);
+//        printf("\nsizeFreelist = %i\n",sizeFreeList);
 
         int combinador = buscaCombinador(grafo);
 
-        //printGrafo(grafo->esq); printf("\n\n");
-        //printf("\nFreelist = %i",tamanhoFreeList());
-        if(validarReducao(combinador) == 0) {
-            //printf("\nChamando MarkScan");
-            markScan();
-        }
+        if(sizeFreeList <= 5) {
+            if(chamadaRecursiva == 1) {
+                break;
+            } else {
+                printf("\n\n######### MarkScan ###########");
+//                printf("\n#");
+//                printGrafo(rootGrafo);
+//                printf("\n# antes:");
+//                printf("\n# \tsizeFreelist = %i",sizeFreeList);
 
+                markScan();
+
+//                printf("\n#");
+//                printGrafo(rootGrafo);
+//                printf("\n# depois:");
+//                printf("\n# \tsizeFreelist = %i",sizeFreeList);
+//                printf("\n##############################\n");
+            }
+        }
 
         switch(combinador) {
             case K: reduzK(grafo); break;
@@ -489,7 +394,8 @@ void reduzirGrafo(node grafo) {
             case IGUALDADE: reduzIgualdade(grafo); break;
             case TRUE: reduzTrue(grafo); break;
             case FALSE: reduzFalse(grafo); break;
-            default: break;
+            default:
+                break;
         }
     }
 }

@@ -17,7 +17,7 @@ static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
 static char teste[N] = "K(SKK(+2(+23)))K\0";
 
 void informacoesSobreAHeap() {
-    int heaputilizada = numeroCelulasGrafo(rootGrafo) + 18; //grafo + 18 tokens alocados
+    int heaputilizada = 0;//numeroCelulasGrafo(rootGrafo) + 18; //grafo + 18 tokens alocados
     int tamanhofreelist = tamanhoFreeList();
     printf("\nCelulas Total\t\t= %i", H);
     printf("\nCelulas Utilizadas\t= %i",heaputilizada);
@@ -28,12 +28,12 @@ void informacoesSobreAHeap() {
 int main(int n, char* args[]) {
     inicializarHeap();
     rootGrafo = gerarGrafo(fib2);
-    adicionarParametro(rootGrafo, 8 );
+    adicionarParametro(rootGrafo, 22 );
+    //adicionarParametro(rootGrafo, atoi(args[1]) );
+
+    reduzirGrafo(rootGrafo, 0);
 
 
-    reduzirGrafo(rootGrafo);
-
-    //informacoesSobreAHeap();
 
     printf("\nTempo = %.15lf", (clock()/(float)CLOCKS_PER_SEC));
     printf("\nResultado = ");

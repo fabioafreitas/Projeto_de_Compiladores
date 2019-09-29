@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define H 10000000 //Tamanho da Heap
+#define H 1000 //Tamanho da Heap
 
 typedef struct reg {
     int tipo;

@@ -14,52 +14,9 @@
 #include "constantes.h"
 #include "heap.h"
 
-static node tokens[128];
 
-//Aloca os tokens que sao utilizados
-//na construcao e reducao do grafo
-//So eh necessaria uma unidade de cada,
-//pois eles sao reutilizados, reduzindo
-//o gasto de memoria da heap
-void alocarTokens() {
-    tokens[-1 * K] = alocarNode(K);
-    tokens[-1 * S] = alocarNode(S);
-    tokens[-1 * I] = alocarNode(I);
-    tokens[-1 * B] = alocarNode(B);
-    tokens[-1 * C] = alocarNode(C);
-    tokens[-1 * D] = alocarNode(D);
-    tokens[-1 * E] = alocarNode(E);
-    tokens[-1 * F] = alocarNode(F);
-    tokens[-1 * Y] = alocarNode(Y);
-    tokens[-1 * SOMA] = alocarNode(SOMA);
-    tokens[-1 * SUBTRACAO] = alocarNode(SUBTRACAO);
-    tokens[-1 * MULTIPLICACAO] = alocarNode(MULTIPLICACAO);
-    tokens[-1 * DIVISAO] = alocarNode(DIVISAO);
-    tokens[-1 * TRUE] = alocarNode(TRUE);
-    tokens[-1 * FALSE] = alocarNode(FALSE);
-    tokens[-1 * MENORQUE] = alocarNode(MENORQUE);
-    tokens[-1 * MAIORQUE] = alocarNode(MAIORQUE);
-    tokens[-1 * IGUALDADE] = alocarNode(IGUALDADE);
 
-    tokens[-1 * S]->gb = 'O';
-    tokens[-1 * K]->gb = 'O';
-    tokens[-1 * I]->gb = 'O';
-    tokens[-1 * B]->gb = 'O';
-    tokens[-1 * C]->gb = 'O';
-    tokens[-1 * D]->gb = 'O';
-    tokens[-1 * E]->gb = 'O';
-    tokens[-1 * F]->gb = 'O';
-    tokens[-1 * Y]->gb = 'O';
-    tokens[-1 * SOMA]->gb = 'O';
-    tokens[-1 * SUBTRACAO]->gb = 'O';
-    tokens[-1 * MULTIPLICACAO]->gb = 'O';
-    tokens[-1 * DIVISAO]->gb = 'O';
-    tokens[-1 * TRUE]->gb = 'O';
-    tokens[-1 * FALSE]->gb = 'O';
-    tokens[-1 * MENORQUE]->gb = 'O';
-    tokens[-1 * MAIORQUE]->gb = 'O';
-    tokens[-1 * IGUALDADE]->gb = 'O';
-}
+
 
 //só pode ser usada na geração do grafo
 node atribuirToken(char tipo) {
@@ -67,6 +24,100 @@ node atribuirToken(char tipo) {
         return tokens[tipo];
     else
         return alocarNode(tipo-'0');
+}
+
+void imprime_arvore(node no){
+    static int deph = 0;
+    static int lista = 0;
+    if(deph == 0 && no->tipo == -25)
+        lista = 1;
+    if(lista && no->tipo == -25)
+        printf("[");
+    if(no->esq) {
+        deph++;
+        imprime_arvore(no->esq);
+    }
+    switch (no->tipo){
+        case -1:
+            break;
+        case ARROBA:
+            printf("(");
+            break;
+        case S:
+            printf("S");
+            break;
+        case K:
+            printf("K");
+            break;
+        case I:
+            printf("I");
+            break;
+        case B:
+            printf("B");
+            break;
+        case C:
+            printf("C");
+            break;
+        case D:
+            printf("D");
+            break;
+        case E:
+            printf("E");
+            break;
+        case F:
+            printf("F");
+            break;
+        case TRUE:
+            printf("TRUE");
+            break;
+        case FALSE:
+            printf("FALSE");
+            break;
+        case MAIORQUE:
+            printf(">");
+            break;
+        case MENORQUE:
+            printf("<");
+            break;
+        case IGUALDADE:
+            printf("==");
+            break;
+        case SOMA:
+            printf("+");
+            break;
+        case SUBTRACAO:
+            printf("-");
+            break;
+        case MULTIPLICACAO:
+            printf("*");
+            break;
+        case DIVISAO:
+            printf("/");
+            break;
+        case Y:
+            printf("Y");
+            break;
+        default:
+            printf("%u", no->tipo);
+    }
+    //printf("%d\n", no->tipo);
+    if(no->dir) {
+        deph++;
+        if(no->dir != no) {
+            imprime_arvore(no->dir);
+            if (lista)
+                printf("]");
+            else
+                printf(")");
+        }else{
+            printf("Y(");
+            imprime_arvore(no->esq);
+            printf(")");
+            return;
+        }
+    }
+    if(deph == 0)
+        lista = 0;
 }
 
 //Exibe o grafo no console, escrito em preordem
@@ -95,7 +146,7 @@ void printGrafo (node r) {
             case ROOT: token = 'R'; break;
             default: numero = 1; break;
         }
-        if(numero == 1) printf ("%i", r->tipo);
+        if(numero == 1) printf ("{%i}", r->tipo);
         else printf ("%c", token);
         printGrafo (r->esq);
         printGrafo (r->dir);

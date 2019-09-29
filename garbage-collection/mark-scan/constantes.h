@@ -29,7 +29,7 @@
 #define IGUALDADE -61
 #define ROOT -100 //Usado como Root do grafo, representa o espaco vazio ' '
 
-#define H 100000 //Tamanho da Heap
+#define H 90000000 //Tamanho da Heap
 #define CELULA_LIVRE   '0'
 #define CELULA_OCUPADA '1'
 
