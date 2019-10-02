@@ -14,10 +14,6 @@
 #include "constantes.h"
 #include "heap.h"
 
-
-
-
-
 //só pode ser usada na geração do grafo
 node atribuirToken(char tipo) {
     if(tipo < '0' || tipo > '9')
@@ -26,102 +22,58 @@ node atribuirToken(char tipo) {
         return alocarNode(tipo-'0');
 }
 
-void imprime_arvore(node no){
+void printGrafoInfixo(node no){
     static int deph = 0;
     static int lista = 0;
-    if(deph == 0 && no->tipo == -25)
-        lista = 1;
-    if(lista && no->tipo == -25)
-        printf("[");
+    if(deph == 0 && no->tipo == -25) lista = 1;
+    if(lista && no->tipo == -25) printf("[");
     if(no->esq) {
         deph++;
-        imprime_arvore(no->esq);
+        printGrafoInfixo(no->esq);
     }
     switch (no->tipo){
-        case -1:
-            break;
-        case ARROBA:
-            printf("(");
-            break;
-        case S:
-            printf("S");
-            break;
-        case K:
-            printf("K");
-            break;
-        case I:
-            printf("I");
-            break;
-        case B:
-            printf("B");
-            break;
-        case C:
-            printf("C");
-            break;
-        case D:
-            printf("D");
-            break;
-        case E:
-            printf("E");
-            break;
-        case F:
-            printf("F");
-            break;
-        case TRUE:
-            printf("TRUE");
-            break;
-        case FALSE:
-            printf("FALSE");
-            break;
-        case MAIORQUE:
-            printf(">");
-            break;
-        case MENORQUE:
-            printf("<");
-            break;
-        case IGUALDADE:
-            printf("==");
-            break;
-        case SOMA:
-            printf("+");
-            break;
-        case SUBTRACAO:
-            printf("-");
-            break;
-        case MULTIPLICACAO:
-            printf("*");
-            break;
-        case DIVISAO:
-            printf("/");
-            break;
-        case Y:
-            printf("Y");
-            break;
-        default:
-            printf("%u", no->tipo);
+        case -1: break;
+        case ARROBA: printf("("); break;
+        case S: printf("S"); break;
+        case K: printf("K"); break;
+        case I: printf("I"); break;
+        case B: printf("B"); break;
+        case C: printf("C"); break;
+        case D: printf("D"); break;
+        case E: printf("E"); break;
+        case F: printf("F"); break;
+        case TRUE: printf("TRUE"); break;
+        case FALSE: printf("FALSE"); break;
+        case MAIORQUE: printf(">"); break;
+        case MENORQUE: printf("<"); break;
+        case IGUALDADE: printf("=="); break;
+        case SOMA: printf("+"); break;
+        case SUBTRACAO: printf("-"); break;
+        case MULTIPLICACAO: printf("*"); break;
+        case DIVISAO: printf("/"); break;
+        case Y: printf("Y"); break;
+        default: printf("%u", no->tipo); break;
     }
-    //printf("%d\n", no->tipo);
     if(no->dir) {
         deph++;
         if(no->dir != no) {
-            imprime_arvore(no->dir);
+            printGrafoInfixo(no->dir);
             if (lista)
                 printf("]");
             else
                 printf(")");
         }else{
             printf("Y(");
-            imprime_arvore(no->esq);
+            printGrafoInfixo(no->esq);
             printf(")");
             return;
         }
     }
-    if(deph == 0)
-        lista = 0;
+    if(deph == 0) lista = 0;
 }
 
 //Exibe o grafo no console, escrito em preordem
-void printGrafo (node r) {
+void printGrafoPosfixo(node r) {
     if (r != NULL) {
         int numero = 0;
         char token;
@@ -146,10 +98,10 @@ void printGrafo (node r) {
             case ROOT: token = 'R'; break;
             default: numero = 1; break;
         }
-        if(numero == 1) printf ("{%i}", r->tipo);
+        if(numero == 1) printf ("(%i)", r->tipo);
         else printf ("%c", token);
-        printGrafo (r->esq);
-        printGrafo (r->dir);
+        printGrafoPosfixo(r->esq);
+        printGrafoPosfixo(r->dir);
     }
 }
 

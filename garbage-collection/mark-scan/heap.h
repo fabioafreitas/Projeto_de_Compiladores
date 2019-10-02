@@ -47,7 +47,7 @@ void inicializarHeap() {
     }
 }
 
-//TODO observar esta funcao
+//Retorna a quantidade de celulas presentes na freelist
 int tamanhoFreeList() {
     int i = 0;
     node aux = freeList;
@@ -58,13 +58,11 @@ int tamanhoFreeList() {
     return i;
 }
 
-
-
 //Este procedimento retorna a primeira celula da freelist, se houverem
 //celulas disponíveis, atribui um inteiro no campo Tipo desta celula
 //e seta os ponteiros esq e dir para NULL.
 node alocarNode(int tipo) {
-    if(freeList->esq == NULL) {
+    if(sizeFreeList == 0) {
         printf("\nErro: Tentou Alocar Celula Com FreeList Vazia\n");
         exit(0);
     }
@@ -134,15 +132,13 @@ void alocarTokens() {
     marcarTokens();
 }
 
-
-
 //Este procedimento é a fase de mark, do algoritmo mark scan.
 //Ele marca todas as celulas conectadas ao grafo com '1'
 void marcarGrafo(node grafo) {
     grafo->gb = CELULA_OCUPADA;
     if(grafo->esq != NULL)
         marcarGrafo(grafo->esq);
-    if(grafo->dir != NULL)
+    if(grafo->dir != NULL && grafo->dir != grafo)
         marcarGrafo(grafo->dir);
 }
 
@@ -162,15 +158,10 @@ void varrerHeap() {
     }
 }
 
+//Algoritmo de garbage collection, Mark-Scan
 void markScan() {
-//    int i = 0;
-//    while(i < H) {
-//        heap[i++].gb = CELULA_LIVRE;
-//    }
-
     marcarTokens();
     marcarGrafo(rootGrafo);
-
     varrerHeap();
 }
 

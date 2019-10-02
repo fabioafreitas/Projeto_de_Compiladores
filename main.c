@@ -14,30 +14,15 @@
 //static char fab2[N] = "Y(ES(C(F=I0)1)(E(D*)I(FBI(F-I1))))\0";
 //static char fib1[N] = "S(K(SII))(S(S(KS)K)(K(SII)))(S(K(S(S(S(KI)(S(S(K<)I)(K2)))I)))(S(S(KS)(S(K(S(K+)))(S(S(KS)(S(KK)I))(K(S(S(K-)I)(K2))))))(S(S(KS)(S(KK)I))(K(S(S(K-)I)(K1))))))\0";
 static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
-static char teste[N] = "K(SKK(+2(+23)))K\0";
-
-void informacoesSobreAHeap() {
-    int heaputilizada = 0;//numeroCelulasGrafo(rootGrafo) + 18; //grafo + 18 tokens alocados
-    int tamanhofreelist = tamanhoFreeList();
-    printf("\nCelulas Total\t\t= %i", H);
-    printf("\nCelulas Utilizadas\t= %i",heaputilizada);
-    printf("\nCelulas FreeList\t= %i",tamanhofreelist);
-    printf("\nCelulas Lixo\t\t= %i\n",H-heaputilizada-tamanhofreelist);
-}
 
 int main(int n, char* args[]) {
     inicializarHeap();
     rootGrafo = gerarGrafo(fib2);
-    adicionarParametro(rootGrafo, 22 );
-    //adicionarParametro(rootGrafo, atoi(args[1]) );
-
-    reduzirGrafo(rootGrafo, 0);
-
-
-
+    adicionarParametro(rootGrafo, 10);
+    reduzirGrafo(0);
     printf("\nTempo = %.15lf", (clock()/(float)CLOCKS_PER_SEC));
     printf("\nResultado = ");
-    printGrafo(rootGrafo->esq);
+    printGrafoPosfixo(rootGrafo->esq);
     printf("\n");
     return 0;
 }
