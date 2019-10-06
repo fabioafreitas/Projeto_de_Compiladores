@@ -3,7 +3,7 @@
 //
 // Armazena a Struct das celulas da heap
 //
-// Armazena o algoritmo de garbage collection, mark scan
+// Armazena o algoritmo de garbage collection, fenichel yochelson
 //
 
 #ifndef PROJETO_DE_COMPILADORES_HEAP_H
@@ -21,9 +21,11 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-static int H;           //Variável global que representa o tamanho da HEAP
+static int H1;           //Variável global que representa o tamanho da HEAP1
+static int H2;           //Variável global que representa o tamanho da HEAP2
 static node tokens[128];//Otimização que reutiliza combinadores
-static noh* heap;       //Ponteiro para a heap
+static noh* heap1;       //Ponteiro para a HEAP1
+static noh* heap1;       //Ponteiro para a HEAP2
 static noh* rootGrafo;  //Ponteiro a cabeça do grafo
 static noh* freeList;   //Ponteiro para a freelist
 static int sizeFreeList;//Variavel que guarda o Tamanho da freelist
