@@ -160,13 +160,13 @@ void formatarString(char* string) {
     }
 }
 
-//Adiciona um parametro ao grafo
-//Refebe o grafo e o parametro a ser adicionado
-void adicionarParametro(node grafo, int param) {
+//Recebe um valor inteiro, que será adicionado
+//ao grafo (rootGRafo) como parametro
+void adicionarParametro(int param) {
     node arroba = alocarNode(ARROBA);
     arroba->dir = alocarNode(param);;
-    arroba->esq = grafo->esq;
-    grafo->esq = arroba;
+    arroba->esq = rootGrafo->esq;
+    rootGrafo->esq = arroba;
 }
 
 

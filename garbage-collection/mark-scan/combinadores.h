@@ -225,7 +225,6 @@ int atribuirArgumentos(node aux, int* argA, int* argB) {
     }
 
     //Significa que as avaliações ocorreram com sucesso
-
     aux->esq->dir = argumentoB;
     aux->esq->esq->dir = argumentoA;
 
@@ -233,69 +232,6 @@ int atribuirArgumentos(node aux, int* argA, int* argB) {
     *argB = argumentoB->tipo;
     return 1;
 }
-
-////SOMA a b = eval(a) + eval(b)
-//node reduzSoma(node grafo) {
-//    node aux = posicionarPonteiro(grafo, 2);
-//
-//    int a, b;
-//    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
-//    if(chamadaRecursiva == 0) {
-//        return aux->esq;
-//    }
-//    node resultado = alocarNode(a+b);
-//
-//    return resultado;
-//}
-//
-////SUBTRACAO a b = eval(a) - eval(b)
-//node reduzSubtracao(node grafo) {
-//    node aux = posicionarPonteiro(grafo, 2);
-//
-//    int a, b;
-//    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
-//    if(chamadaRecursiva == 0) {
-//        return aux->esq;
-//    }
-//    node resultado = alocarNode(a-b);
-//
-//    return  resultado;
-//}
-//
-////MULTIPLICACAO a b = eval(a) * eval(b)
-//node reduzMultiplicacao(node grafo) {
-//    node aux = posicionarPonteiro(grafo, 2);
-//
-//    int a, b;
-//    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
-//    if(chamadaRecursiva == 0) {
-//        return aux->esq;
-//    }
-//
-//    node resultado = alocarNode(a*b);
-//
-//    return  resultado;
-//}
-//
-////DIVISAO a b = eval(a) / eval(b)
-//node reduzDivisao(node grafo) {
-//    node aux = posicionarPonteiro(grafo, 2);
-//
-//    int a, b;
-//    int chamadaRecursiva = atribuirArgumentos(aux, &a, &b);
-//    if(chamadaRecursiva == 0) {
-//        return aux->esq;
-//    }
-//
-//    if(b == 0) {
-//        printf("\n# Divisao por zero #\n");
-//        exit(0);
-//    }
-//
-//    node resultado = alocarNode(a/b);
-//
-//    return  resultado;
-//}
 
 //SOMA a b = eval(a) + eval(b)
 void reduzSoma(node grafo) {
@@ -419,20 +355,43 @@ node avaliarExpressao(node argumento) {
     return res;
 }
 
+
+
 //Este procedimento recebe um grafo
 //e retorna sua forma irredutível
 node reduzirGrafo(int chamadaRecursiva) {
+    int callsGC = 0;
+    float porcentagem = 10;
+    int euristica = H * (porcentagem/100);
+
+    /*Variaveis que armazenam o tamanho da freelist
+    antes e depois da ultima chamada do GC*/
+    int freelistAntesLastCall = 0;
+    int freelistDepoisLastCall = 0;
+
     while(rootGrafo->esq->tipo == ARROBA) {
-
         int combinador = buscaCombinador(rootGrafo);
-
-        if(sizeFreeList <= 10) {
-            if(chamadaRecursiva == 1) {
+        if( sizeFreeList <= euristica ) {
+            if(chamadaRecursiva) {
                 break;
             } else {
-                //printGrafoInfixo(rootGrafo->esq);
-                printf("\n# MarkScan #\n");
+                callsGC++;
+                /*printGrafoInfixo(rootGrafo->esq);
+                printf("\n# MarkScan %i #\n",callsGC);*/
+                int freelistAntesCurrentCall = sizeFreeList;
                 markScan();
+                int freelistDepoisCurrentCall = sizeFreeList;
+
+                /*Caso o tamanho da freelist antes e depois
+                da chamada anterior e da atual sejam iguais respectivamente
+                entao significa que a heap eh muito pequena para esta reducao*/
+                if( freelistAntesLastCall == freelistAntesCurrentCall &&
+                    freelistDepoisLastCall == freelistDepoisCurrentCall) {
+                    printf("\nErro: HEAP cheia, GB nao consegue liberar mais memoria.\n");
+                    exit(0);
+                }
+                freelistAntesLastCall = freelistAntesCurrentCall;
+                freelistDepoisLastCall = freelistDepoisCurrentCall;
             }
         }
 
@@ -446,17 +405,10 @@ node reduzirGrafo(int chamadaRecursiva) {
             case E: reduzE(rootGrafo); break;
             case F: reduzF(rootGrafo); break;
             case Y: reduzY2(rootGrafo); break;
-
             case SOMA: reduzSoma(rootGrafo); break;
             case SUBTRACAO: reduzSubtracao(rootGrafo); break;
             case MULTIPLICACAO: reduzMultiplicacao(rootGrafo); break;
             case DIVISAO: reduzDivisao(rootGrafo); break;
-
-//            case SOMA: rootGrafo->esq = reduzSoma(rootGrafo); break;
-//            case SUBTRACAO: rootGrafo->esq = reduzSubtracao(rootGrafo); break;
-//            case MULTIPLICACAO: rootGrafo->esq = reduzMultiplicacao(rootGrafo); break;
-//            case DIVISAO: rootGrafo->esq = reduzDivisao(rootGrafo); break;
-
             case MENORQUE: reduzMenorQue(rootGrafo); break;
             case MAIORQUE: reduzMaiorQue(rootGrafo); break;
             case IGUALDADE: reduzIgualdade(rootGrafo); break;
@@ -465,6 +417,11 @@ node reduzirGrafo(int chamadaRecursiva) {
             default: break;
         }
     }
+
+    if(chamadaRecursiva == 0) {
+        printf("\nChamadas do GC = %i", callsGC);
+    }
+
     return rootGrafo->esq;
 }
 

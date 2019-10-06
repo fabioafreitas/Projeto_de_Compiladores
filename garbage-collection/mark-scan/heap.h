@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include "constantes.h"
 
-
 typedef struct reg {
     int tipo;
     char gb;
@@ -22,23 +21,25 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-
-static node tokens[128];
+static int H;           //Variável global que representa o tamanho da HEAP
+static node tokens[128];//Otimização que reutiliza combinadores
 static noh* heap;       //Ponteiro para a heap
 static noh* rootGrafo;  //Ponteiro a cabeça do grafo
 static noh* freeList;   //Ponteiro para a freelist
+static int sizeFreeList;//Variavel que guarda o Tamanho da freelist
 
-static int sizeFreeList;
-
-//Este procedimento cria o vetor da heap e
-//adiciona todas essas celulas à freelist
-//e marca o bit do gabage collection com '0'
-void inicializarHeap() {
-    sizeFreeList = H; //o tamanho inicial da freelist, é o tamanho da HEAP
-    int aux = 0;
+//Este procedimento recebe a quantidade de
+//celulas da heap e cria um vetor que as contem.
+//Adiciona todas essas celulas à freelist
+//e marca o bit do gabage collection com '0' (CELULA_LIVRE)
+void inicializarHeap(int sizeHeap) {
+    H = sizeHeap;
+    sizeFreeList = H;
     heap = (noh*) malloc(sizeof(noh) * H);
     freeList = (noh*) malloc(sizeof(noh));
     freeList->esq = NULL;
+
+    int aux = 0;
     while(aux < H) {
         heap[aux].esq = freeList->esq;
         heap[aux].gb = CELULA_LIVRE;
