@@ -361,37 +361,22 @@ node avaliarExpressao(node argumento) {
 //e retorna sua forma irredutível
 node reduzirGrafo(int chamadaRecursiva) {
     int callsGC = 0;
-    float porcentagem = 10;
-    int euristica = H * (porcentagem/100);
+    float porcentagem = 5;
+    int euristica = (H/2) * (porcentagem/100);
 
-    /*Variaveis que armazenam o tamanho da freelist
-    antes e depois da ultima chamada do GC*/
-    int freelistAntesLastCall = 0;
-    int freelistDepoisLastCall = 0;
+    int memoriaLivreLastCall = 0;
 
     while(rootGrafo->esq->tipo == ARROBA) {
         int combinador = buscaCombinador(rootGrafo);
-        if( sizeFreeList <= euristica ) {
+        if( ((H/2)-heapPointer) < euristica ) {
             if(chamadaRecursiva) {
                 break;
             } else {
                 callsGC++;
-                /*printGrafoInfixo(rootGrafo->esq);
-                printf("\n# MarkScan %i #\n",callsGC);*/
-                int freelistAntesCurrentCall = sizeFreeList;
-                markScan();
-                int freelistDepoisCurrentCall = sizeFreeList;
+                printf("# Fenichel Yochelson #");
+                fenichelYochelson();
 
-                /*Caso o tamanho da freelist antes e depois
-                da chamada anterior e da atual sejam iguais respectivamente
-                entao significa que a heap eh muito pequena para esta reducao*/
-                if( freelistAntesLastCall == freelistAntesCurrentCall &&
-                    freelistDepoisLastCall == freelistDepoisCurrentCall) {
-                    printf("\nErro: HEAP cheia, GB nao consegue liberar mais memoria.\n");
-                    exit(0);
-                }
-                freelistAntesLastCall = freelistAntesCurrentCall;
-                freelistDepoisLastCall = freelistDepoisCurrentCall;
+                //TODO observar loop infito de chamadas no GC
             }
         }
 

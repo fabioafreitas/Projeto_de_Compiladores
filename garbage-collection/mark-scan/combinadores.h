@@ -361,7 +361,7 @@ node avaliarExpressao(node argumento) {
 //e retorna sua forma irredutível
 node reduzirGrafo(int chamadaRecursiva) {
     int callsGC = 0;
-    float porcentagem = 10;
+    float porcentagem = 5;
     int euristica = H * (porcentagem/100);
 
     /*Variaveis que armazenam o tamanho da freelist

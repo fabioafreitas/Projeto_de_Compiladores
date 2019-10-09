@@ -212,10 +212,19 @@ void reduzY(node grafo) {
     arroba2->dir = argumentoA;
     arroba2->esq = atribuirToken('Y');
 
-    //Outra forma de reduzir
-    //node arroba1 = alocarNode(ARROBA);
-    //arroba1->esq = maquina-inteiros->esq->dir;
-    //arroba1->dir = arroba1;
+    aux->esq = arroba1;
+}
+
+void reduzY2(node grafo) {
+    int size = tamanhoGrafo(grafo);
+    node aux = grafo;
+    while(size > 2) {
+        aux = aux->esq;
+        size--;
+    }
+    node arroba1 = alocarNode(ARROBA);
+    arroba1->esq = aux->esq->dir;
+    arroba1->dir = arroba1;
 
     aux->esq = arroba1;
 }
@@ -432,7 +441,7 @@ void reduzirGrafo(node grafo) {
                 break;
             case F: reduzF(grafo);
                 break;
-            case Y: reduzY(grafo);
+            case Y: reduzY2(grafo);
                 break;
             case SOMA: reduzSoma(grafo);
                 break;

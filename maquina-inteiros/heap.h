@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define H 1000 //Tamanho da Heap
+
 
 typedef struct reg {
     int tipo;
@@ -24,6 +24,7 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
+int H = 1000; //Tamanho da Heap
 static noh* heap;
 static int heapIndex = 0;
 static node rootGrafo;
@@ -47,7 +48,8 @@ node alocarNode(int tipo) {
 //os nodes da heap, indicando
 //que estão Livres para serem
 //alocados
-void inicializarHeap() {
+void inicializarHeap(int sizeHeap) {
+    H = sizeHeap;
     heap = (noh*) malloc(sizeof(noh) * H);
     int i = 0;
     while(i < H) {

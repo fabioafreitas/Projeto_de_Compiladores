@@ -21,91 +21,37 @@ typedef struct reg {
 } noh;
 typedef noh* node;
 
-static int H1;           //Variável global que representa o tamanho da HEAP1
-static int H2;           //Variável global que representa o tamanho da HEAP2
-static node tokens[128];//Otimização que reutiliza combinadores
-static noh* heap1;       //Ponteiro para a HEAP1
-static noh* heap1;       //Ponteiro para a HEAP2
-static noh* rootGrafo;  //Ponteiro a cabeça do grafo
-static noh* freeList;   //Ponteiro para a freelist
-static int sizeFreeList;//Variavel que guarda o Tamanho da freelist
+static int H;          //Variável global que representa o tamanho da HEAP
 
-//Este procedimento recebe a quantidade de
-//celulas da heap e cria um vetor que as contem.
-//Adiciona todas essas celulas à freelist
-//e marca o bit do gabage collection com '0' (CELULA_LIVRE)
+static noh* heap1;      //Ponteiro para a HEAP1
+static noh* heap2;      //Ponteiro para a HEAP2
+static noh* heapAux;      //Ponteiro Aux, usado no funcionamento do GC
+
+static node tokens[128];//Otimização que reutiliza combinadores
+static noh* rootGrafo;  //Ponteiro a cabeça do grafo
+static int heapPointer; //Varialvel que conta a proxima celula livre de heap atual
+
+//Procedimento que recebe o tamanho total da heap
+//e aloca duas heaps com o tamanho total divido por 2
 void inicializarHeap(int sizeHeap) {
     H = sizeHeap;
-    sizeFreeList = H;
-    heap = (noh*) malloc(sizeof(noh) * H);
-    freeList = (noh*) malloc(sizeof(noh));
-    freeList->esq = NULL;
-
-    int aux = 0;
-    while(aux < H) {
-        heap[aux].esq = freeList->esq;
-        heap[aux].gb = CELULA_LIVRE;
-        freeList->esq = &heap[aux];
-        aux++;
-    }
+    heap1 = (noh*) malloc(sizeof(noh) * (H/2));
+    heap2 = (noh*) malloc(sizeof(noh) * (H/2));
+    heapAux = (noh*) malloc(sizeof(noh));
+    heapPointer = 0;
 }
 
-//Retorna a quantidade de celulas presentes na freelist
-int tamanhoFreeList() {
-    int i = 0;
-    node aux = freeList;
-    while(aux->esq != NULL) {
-        aux = aux->esq;
-        i++;
-    }
-    return i;
-}
 
-//Este procedimento retorna a primeira celula da freelist, se houverem
-//celulas disponíveis, atribui um inteiro no campo Tipo desta celula
-//e seta os ponteiros esq e dir para NULL.
+//Retorna um node da heap em uso atual
+//recebe o tipo de dado a ser armazenado no
+//campo tipo do node
 node alocarNode(int tipo) {
-    if(sizeFreeList == 0) {
-        printf("\nErro: Tentou Alocar Celula Com FreeList Vazia\n");
-        exit(0);
-    }
-    sizeFreeList--;
-
-    //Alocando celula da freeList
-    node celulaAlocada = freeList->esq;
-
-    //Reorganizando o ponteiro da freeList
-    freeList->esq = freeList->esq->esq;
-
+    node celulaAlocada = &heap1[heapPointer++];
     celulaAlocada->tipo = tipo;
     celulaAlocada->esq = celulaAlocada->dir = NULL;
     return celulaAlocada;
 }
 
-//Marca as celulas reservadas para aos combinadores t
-//como CELULAS_OCUPADAS, pois estas celulas nao podem
-//ser desalocadas, uma vez que só existe uma unidade
-//de cada combinador no backend
-void marcarTokens() {
-    tokens[-1 * S]->gb = CELULA_OCUPADA;
-    tokens[-1 * K]->gb = CELULA_OCUPADA;
-    tokens[-1 * I]->gb = CELULA_OCUPADA;
-    tokens[-1 * B]->gb = CELULA_OCUPADA;
-    tokens[-1 * C]->gb = CELULA_OCUPADA;
-    tokens[-1 * D]->gb = CELULA_OCUPADA;
-    tokens[-1 * E]->gb = CELULA_OCUPADA;
-    tokens[-1 * F]->gb = CELULA_OCUPADA;
-    tokens[-1 * Y]->gb = CELULA_OCUPADA;
-    tokens[-1 * SOMA]->gb = CELULA_OCUPADA;
-    tokens[-1 * SUBTRACAO]->gb = CELULA_OCUPADA;
-    tokens[-1 * MULTIPLICACAO]->gb = CELULA_OCUPADA;
-    tokens[-1 * DIVISAO]->gb = CELULA_OCUPADA;
-    tokens[-1 * TRUE]->gb = CELULA_OCUPADA;
-    tokens[-1 * FALSE]->gb = CELULA_OCUPADA;
-    tokens[-1 * MENORQUE]->gb = CELULA_OCUPADA;
-    tokens[-1 * MAIORQUE]->gb = CELULA_OCUPADA;
-    tokens[-1 * IGUALDADE]->gb = CELULA_OCUPADA;
-}
 
 //Aloca os tokens que sao utilizados
 //na construcao e reducao do grafo
@@ -131,41 +77,60 @@ void alocarTokens() {
     tokens[-1 * MENORQUE] = alocarNode(MENORQUE);
     tokens[-1 * MAIORQUE] = alocarNode(MAIORQUE);
     tokens[-1 * IGUALDADE] = alocarNode(IGUALDADE);
-
-    marcarTokens();
 }
 
-//Este procedimento é a fase de mark, do algoritmo mark scan.
-//Ele marca todas as celulas conectadas ao grafo com '1'
+//Recebe um grafo e o copia para a heap vazia
+node copiarGrafoEmUso(node grafo) {
+    if(grafo == NULL) {
+        return NULL;
+    }
+
+    int currentIndex = heapPointer++;
+    heap2[currentIndex].tipo = grafo->tipo;
+    grafo->gb = CELULA_VISITADA;
+    //TODO tratar celulas que são apontadas por mais de um ponteiro
+
+    node auxEsq, auxDir;
+
+    //redundancia
+    if(grafo == grafo->esq) heap2[currentIndex].esq = &heap2[currentIndex];
+    else auxEsq = copiarGrafoEmUso(grafo->esq);
+
+    //redundancia
+    if(grafo == grafo->dir) heap2[currentIndex].dir = &heap2[currentIndex];
+    else auxDir = copiarGrafoEmUso(grafo->dir);
+
+    heap2[currentIndex].esq = auxEsq;
+    heap2[currentIndex].dir = auxDir;
+
+    return &heap2[currentIndex];
+}
+
+//marca as celulas do grafo em uso como
+//CELULA_NAO_VISITADA, para evitar a cópia
+//da mesma célula mais de uma vez
 void marcarGrafo(node grafo) {
-    grafo->gb = CELULA_OCUPADA;
-    if(grafo->esq != NULL)
-        marcarGrafo(grafo->esq);
-    if(grafo->dir != NULL && grafo->dir != grafo)
-        marcarGrafo(grafo->dir);
-}
-
-//Este procedimento varre toda a heap e devolve para a freelist
-//todas as celulas não marcadas com '1'
-void varrerHeap() {
-    int i = 0;
-    freeList->esq = NULL;
-    sizeFreeList = 0;
-    while(i < H) {
-        if(heap[i].gb != CELULA_OCUPADA) {
-            heap[i].esq = freeList->esq;
-            freeList->esq = &heap[i];
-            sizeFreeList++;
-        }
-        i++;
+    if(grafo != NULL) {
+        grafo->gb = CELULA_NAO_VISITADA;
+        if(grafo->esq != NULL)
+            marcarGrafo(grafo->esq);
+        if(grafo->dir != NULL)
+            marcarGrafo(grafo->dir);
     }
 }
 
-//Algoritmo de garbage collection, Mark-Scan
-void markScan() {
-    marcarTokens();
+void fenichelYochelson() {
     marcarGrafo(rootGrafo);
-    varrerHeap();
+
+    //copiar grafo em uso para heap2
+    heapPointer = 0;
+    rootGrafo = copiarGrafoEmUso(rootGrafo);
+
+    //trocando ponteiros de heap1 e heap2
+    heapAux = heap1;
+    heap1 = heap2;
+    heap2 = heapAux;
 }
+
 
 #endif //PROJETO_DE_COMPILADORES_HEAP_H

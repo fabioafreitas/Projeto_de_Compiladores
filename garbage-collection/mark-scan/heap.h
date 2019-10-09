@@ -63,10 +63,10 @@ int tamanhoFreeList() {
 //celulas disponíveis, atribui um inteiro no campo Tipo desta celula
 //e seta os ponteiros esq e dir para NULL.
 node alocarNode(int tipo) {
-    if(sizeFreeList == 0) {
-        printf("\nErro: Tentou Alocar Celula Com FreeList Vazia\n");
-        exit(0);
-    }
+//    if(sizeFreeList == 0) {
+//        printf("\nErro: Tentou Alocar Celula Com FreeList Vazia\n");
+//        exit(0);
+//    }
     sizeFreeList--;
 
     //Alocando celula da freeList

@@ -164,7 +164,7 @@ void formatarString(char* string) {
 //ao grafo (rootGRafo) como parametro
 void adicionarParametro(int param) {
     node arroba = alocarNode(ARROBA);
-    arroba->dir = alocarNode(param);;
+    arroba->dir = alocarNode(param);
     arroba->esq = rootGrafo->esq;
     rootGrafo->esq = arroba;
 }
