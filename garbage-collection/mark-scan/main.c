@@ -13,15 +13,15 @@ static char fib1[N] = "S(K(SII))(S(S(KS)K)(K(SII)))(S(K(S(S(S(KI)(S(S(K<)I)(K2))
 static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
 
 int main(int n, char* args[]) {
-    inicializarHeap(1000);
+    inicializarHeap();
     rootGrafo = gerarGrafo(fib2);
     adicionarParametro(10);
 
     printf("\n# markscan #");
-    reduzirgrafo(0);
-    printf("\ntempo = %.10lf", (clock()/(float)clocks_per_sec));
+    reduzirGrafo(0);
+    printf("\ntempo = %.10lf", (clock()/(float)CLOCKS_PER_SEC));
     printf("\nresultado = ");
-    printgrafoposfixo(rootgrafo->esq);
+    printGrafoPosfixo(rootGrafo->esq);
     printf("\n");
     return 0;
 }

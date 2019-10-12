@@ -35,7 +35,7 @@ int buscaCombinador(node grafo) {
 
 
 //Retorna um ponteiro, cujos elementos abaixo dele
-//são todos os argumentos da respectiva reduçãp
+//são todos os argumentos da respectiva redução
 //Recebe o grafo atual e a quantidade de elementos
 //desta redução
 node posicionarPonteiro(node grafo, int numArgs) {
@@ -368,15 +368,17 @@ node reduzirGrafo(int chamadaRecursiva) {
 
     while(rootGrafo->esq->tipo == ARROBA) {
         int combinador = buscaCombinador(rootGrafo);
-        if( ((H/2)-heapPointer) < euristica ) {
+
+        int memoriaLivre = (H/2)-heapPointer;
+        if( memoriaLivre < 5/*euristica*/ ) {
             if(chamadaRecursiva) {
                 break;
             } else {
                 callsGC++;
-                printf("# Fenichel Yochelson #");
+                printf("\n\n# Fenichel Yochelson #\n");
+                printf("\nantes = "); printGrafoInfixo(rootGrafo);
                 fenichelYochelson();
-
-                //TODO observar loop infito de chamadas no GC
+                printf("\ndepois = "); printGrafoInfixo(rootGrafo);
             }
         }
 

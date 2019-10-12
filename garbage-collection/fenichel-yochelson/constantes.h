@@ -30,14 +30,10 @@
 #define IGUALDADE -61
 #define ROOT -100 //Usado como Root do grafo, representa o espaco vazio ' '
 
-///GARBAGE COLLECTION
-#define CELULA_LIVRE   '0'
-#define CELULA_OCUPADA '1'
-#define CELULA_VISITADA '2'
-#define CELULA_NAO_VISITADA '3'
-
 
 ///TAMANHO DA STRING A SER REDUZIDA
 #define N 10000000
+
+#define H 1000
 
 #endif //PCOMPILADORES_CONSTANTES_H

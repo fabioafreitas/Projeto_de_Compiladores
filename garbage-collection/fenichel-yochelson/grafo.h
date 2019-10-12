@@ -213,7 +213,8 @@ node gerarGrafo(char* string) {
     int lenght = 0;
     while(string[lenght] != '\0')
         lenght++;
-    return gerarGrafoAux(string, 0, lenght);
+    node grafo = gerarGrafoAux(string, 0, lenght);
+    return grafo;
 }
 
 #endif //PROJETO_DE_COMPILADORES_GRAFO_H
