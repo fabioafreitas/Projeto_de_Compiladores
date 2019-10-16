@@ -370,15 +370,12 @@ node reduzirGrafo(int chamadaRecursiva) {
         int combinador = buscaCombinador(rootGrafo);
 
         int memoriaLivre = (H/2)-heapPointer;
-        if( memoriaLivre < 5/*euristica*/ ) {
+        if( memoriaLivre < euristica ) {
             if(chamadaRecursiva) {
                 break;
             } else {
                 callsGC++;
-                printf("\n\n# Fenichel Yochelson #\n");
-                printf("\nantes = "); printGrafoInfixo(rootGrafo);
                 fenichelYochelson();
-                printf("\ndepois = "); printGrafoInfixo(rootGrafo);
             }
         }
 

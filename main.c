@@ -14,7 +14,7 @@ static char teste[N] = "SKK(+1(+23))\0";
 
 int main(int n, char* args[]) {
     rootGrafo = gerarGrafo(fib2);
-    adicionarParametro(7);
+    adicionarParametro(30);
     reduzirGrafo(0);
 
 

@@ -32,6 +32,10 @@ static int currentHeap = 1; //Indica qual heap deve ser usada atualmente. (1) ->
 //recebe o tipo de dado a ser armazenado no
 //campo tipo do node
 node alocarNode(int tipo) {
+    if(heapPointer >= H/2) {
+        printf("\nErro: HeapPointer maior que Heap/2\n");
+        exit(0);
+    }
     node celulaAlocada = (currentHeap == 1) ? &heap1[heapPointer++] : &heap2[heapPointer++];
     celulaAlocada->tipo = tipo;
     celulaAlocada->esq = celulaAlocada->dir = NULL;
@@ -80,39 +84,32 @@ void copiaTokens() {
 node copiarGrafo(node grafo) {
     if(grafo == NULL) return NULL;
 
-    if(heapPointer >= H/2) {
-        printf("\nErro: HeapPointer maior que Heap/2\n");
-        exit(0);
-    }
-
-    int index = heapPointer++;
-    node nodeCopia = (currentHeap == 1) ? &heap1[index] : &heap2[index];
-
-    nodeCopia->tipo = grafo->tipo;
+    node nodeCopia = alocarNode(grafo->tipo);
     nodeCopia->esq = grafo->esq;
     nodeCopia->dir = grafo->dir;
+
+    node auxEsq = nodeCopia->esq;
+    node auxDir = nodeCopia->dir;
 
     grafo->esq = nodeCopia;
     grafo->dir = NULL;
 
 
     //Foward Pointer
-    node aux = nodeCopia->esq;
-    if(aux != NULL) {
-        if (aux->dir == NULL && aux->esq != NULL) {
-            nodeCopia->esq = aux->esq;
+    if(auxEsq != NULL) {
+        if (auxEsq->dir == NULL && auxEsq->esq != NULL) {
+            nodeCopia->esq = auxEsq->esq;
         } else {
-            nodeCopia->esq = copiarGrafo(aux);
+            nodeCopia->esq = copiarGrafo(auxEsq);
         }
     }
 
     //Foward Pointer
-    aux = nodeCopia->dir;
-    if(aux != NULL) {
-        if (aux->dir == NULL && aux->esq != NULL) {
-            nodeCopia->dir = aux->esq;
+    if(auxDir != NULL) {
+        if (auxDir->dir == NULL && auxDir->esq != NULL) {
+            nodeCopia->dir = auxDir->esq;
         } else {
-            nodeCopia->dir = copiarGrafo(aux);
+            nodeCopia->dir = copiarGrafo(auxDir);
         }
     }
 

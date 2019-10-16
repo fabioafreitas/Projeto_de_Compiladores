@@ -376,8 +376,6 @@ node reduzirGrafo(int chamadaRecursiva) {
                 break;
             } else {
                 callsGC++;
-                /*printGrafoInfixo(rootGrafo->esq);
-                printf("\n# MarkScan %i #\n",callsGC);*/
                 int freelistAntesCurrentCall = sizeFreeList;
                 markScan();
                 int freelistDepoisCurrentCall = sizeFreeList;
