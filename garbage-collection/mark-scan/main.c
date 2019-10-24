@@ -14,8 +14,8 @@ static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
 
 int main(int n, char* args[]) {
     inicializarHeap();
-    rootGrafo = gerarGrafo(fib2);
-    adicionarParametro(10);
+    rootGrafo = gerarGrafo(fib1);
+    adicionarParametro(25);
 
     printf("\n# Mark Scan #");
     reduzirGrafo(0);
