@@ -421,8 +421,8 @@ void reduzIgualdade(node grafo) {
 
 void reduzirGrafo(node grafo) {
     while(grafo->esq->tipo == ARROBA) {
-        //printGrafo(grafo->esq);
-        //printf("\n\n");
+        printGrafoInfixo(grafo->esq);
+        printf("\n\n");
         int combinador = buscaCombinador(grafo);
         switch(combinador) {
             case K: reduzK(grafo);

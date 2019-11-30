@@ -11,58 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
+#include "constantes.h"
 #include "heap.h"
-
-#define ARROBA -64
-#define K -75
-#define S -83
-#define I -73
-#define B -66
-#define C -67
-#define D -68
-#define E -69
-#define F -70
-#define Y -89
-#define SOMA -43
-#define SUBTRACAO -45
-#define MULTIPLICACAO -42
-#define DIVISAO -47
-#define TRUE -15
-#define FALSE -16
-#define MENORQUE -60
-#define MAIORQUE -62
-#define IGUALDADE -61
-#define EMPTY -100 //Usado como Root do grafo, representa o espaco vazio ' '
-
-static node tokens[128];
-
-//Aloca os tokens que sao utilizados
-//na construcao e reducao do grafo
-//So eh necessaria uma unidade de cada,
-//pois eles sao reutilizados, reduzindo
-//o gasto de memoria da heap
-void alocarTokens() {
-    tokens[-1 * ARROBA] = alocarNode(ARROBA);
-    tokens[-1 * K] = alocarNode(K);
-    tokens[-1 * S] = alocarNode(S);
-    tokens[-1 * I] = alocarNode(I);
-    tokens[-1 * B] = alocarNode(B);
-    tokens[-1 * C] = alocarNode(C);
-    tokens[-1 * D] = alocarNode(D);
-    tokens[-1 * E] = alocarNode(E);
-    tokens[-1 * F] = alocarNode(F);
-    tokens[-1 * Y] = alocarNode(Y);
-    tokens[-1 * SOMA] = alocarNode(SOMA);
-    tokens[-1 * SUBTRACAO] = alocarNode(SUBTRACAO);
-    tokens[-1 * MULTIPLICACAO] = alocarNode(MULTIPLICACAO);
-    tokens[-1 * DIVISAO] = alocarNode(DIVISAO);
-    tokens[-1 * TRUE] = alocarNode(TRUE);
-    tokens[-1 * FALSE] = alocarNode(FALSE);
-    tokens[-1 * MENORQUE] = alocarNode(MENORQUE);
-    tokens[-1 * MAIORQUE] = alocarNode(MAIORQUE);
-    tokens[-1 * IGUALDADE] = alocarNode(IGUALDADE);
-}
 
 //só pode ser usada na geração do grafo
 node atribuirToken(char tipo) {
@@ -71,6 +21,7 @@ node atribuirToken(char tipo) {
     else
         return alocarNode(tipo-'0');
 }
+
 void printGrafoInfixo(node no){
     static int deph = 0;
     static int lista = 0;
@@ -144,7 +95,7 @@ void printGrafoPosfixo(node r) {
             case MENORQUE: token = '<'; break;
             case MAIORQUE: token = '>'; break;
             case IGUALDADE: token = '='; break;
-            case EMPTY: token = 'R'; break;
+            case ROOT: token = 'R'; break;
             default: numero = 1; break;
         }
         if(numero == 1) printf ("(%i)", r->tipo);
@@ -209,13 +160,13 @@ void formatarString(char* string) {
     }
 }
 
-//Adiciona um parametro ao grafo
-//Refebe o grafo e o parametro a ser adicionado
-void adicionarParametro(node grafo, int param) {
+//Recebe um valor inteiro, que será adicionado
+//ao grafo (rootGRafo) como parametro
+void adicionarParametro(int param) {
     node arroba = alocarNode(ARROBA);
-    arroba->dir = alocarNode(param);
-    arroba->esq = grafo->esq;
-    grafo->esq = arroba;
+    arroba->dir = alocarNode(param);;
+    arroba->esq = rootGrafo->esq;
+    rootGrafo->esq = arroba;
 }
 
 
@@ -224,7 +175,8 @@ void adicionarParametro(node grafo, int param) {
 //Converte esta string para grafo e
 //retorna o node raiz do grafo gerado
 node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
-    node root = alocarNode(EMPTY);
+    node root = alocarNode(ROOT);
+    root->dir = NULL;
 
     // Folha a esquerda
     node token = atribuirToken(string[indexAtual++]);
@@ -233,14 +185,6 @@ node gerarGrafoAux(char* string, int indexAtual, int indexFinal) {
     // Folhas a direita
     while(indexAtual < indexFinal) {
         if(string[indexAtual] != '(') {
-            //node token;
-            /*if(string[indexAtual] >= '0' || string[indexAtual] <= '9') {
-                int numero = receberNumero(string, &indexAtual);
-                token = alocarNode(numero);
-            }
-            else {
-                token = atribuirToken(string[indexAtual++]);
-            }*/
             node token = atribuirToken(string[indexAtual++]);
             node arroba = alocarNode(ARROBA);
             arroba->dir = token;
@@ -269,7 +213,8 @@ node gerarGrafo(char* string) {
     int lenght = 0;
     while(string[lenght] != '\0')
         lenght++;
-    return gerarGrafoAux(string, 0, lenght);
+    node grafo = gerarGrafoAux(string, 0, lenght);
+    return grafo;
 }
 
 #endif //PROJETO_DE_COMPILADORES_GRAFO_H
