@@ -16,7 +16,6 @@ int main(int n, char* args[]) {
     inicializarHeap();
     rootGrafo = gerarGrafo(fib1);
     adicionarParametro(24);
-
     printf("\n# Mark Scan #");
     reduzirGrafo(0);
     printf("\ntempo = %.5lf", (clock()/(float)CLOCKS_PER_SEC));
