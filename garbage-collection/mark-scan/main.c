@@ -15,11 +15,11 @@ static char fib2[N] = "Y(ES(S(F<I2)I)(D(D+)(FBI(F-I2))(FBI(F-I1))))\0";
 int main(int n, char* args[]) {
     inicializarHeap();
     rootGrafo = gerarGrafo(fib1);
-    adicionarParametro(25);
+    adicionarParametro(24);
 
     printf("\n# Mark Scan #");
     reduzirGrafo(0);
-    printf("\ntempo = %.10lf", (clock()/(float)CLOCKS_PER_SEC));
+    printf("\ntempo = %.5lf", (clock()/(float)CLOCKS_PER_SEC));
     printf("\nresultado = ");
     printGrafoPosfixo(rootGrafo->esq);
     printf("\n");

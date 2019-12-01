@@ -80,55 +80,51 @@ void copiaTokens() {
     }
 }
 
+//Copia um node e transforma a celula original num forward pointer
+node copiarNode(node celula) {
+    node celulaCopia = alocarNode(celula->tipo);
+    celulaCopia->esq = celula->esq;
+    celulaCopia->dir = celula->dir;
+    celula->esq = celulaCopia;
+    celula->dir = NULL;
+    return celulaCopia;
+}
+
 //Recebe um grafo e o copia para a heap vazia
 node copiarGrafo(node grafo) {
     copyPointer = heapPointer;
 
-    node auxEsq, auxDir, nodeCopiaAtual;
+    //Copiando a raiz do grafo
+    copiarNode(grafo);
 
-    node nodeCopia = alocarNode(grafo->tipo);
-    nodeCopia->esq = grafo->esq;
-    nodeCopia->dir = grafo->dir;
-    grafo->esq = nodeCopia;
-    grafo->dir = NULL;
-
+    //Copiando demais celulas em LARGURA
     while(copyPointer < heapPointer) {
         if(copyPointer > (H/2)) {
             printf("Erro: Memoria cheia");
             exit(0);
         }
 
-        nodeCopiaAtual = (currentHeap == 1) ? &heap1[copyPointer] : &heap2[copyPointer];
-        auxEsq = nodeCopiaAtual->esq;
-        auxDir = nodeCopiaAtual->dir;
+        //nodeCopia armazena a celula que copyPointer referencia
+        node nodeCopia = (currentHeap == 1) ? &heap1[copyPointer] : &heap2[copyPointer];
+        node nodeEsq = nodeCopia->esq;
+        node nodeDir = nodeCopia->dir;
 
-        //Foward Pointer
-        if(auxEsq != NULL) {
-            if (auxEsq->dir == NULL && auxEsq->esq != NULL) {
-                nodeCopia->esq = auxEsq->esq;
+        if(nodeEsq != NULL) {
+            if (nodeEsq->dir == NULL && nodeEsq->esq != NULL) {
+                nodeCopia->esq = nodeEsq->esq;
             } else {
-                node nodeCopiaEsq = alocarNode(auxEsq->tipo);
-                nodeCopiaEsq->esq = auxEsq->esq;
-                nodeCopiaEsq->dir = auxEsq->dir;
-                auxEsq->esq = nodeCopiaEsq;
-                auxEsq->dir = NULL;
-                nodeCopia->esq = nodeCopiaEsq;
+                nodeCopia->esq = copiarNode(nodeEsq);
             }
         }
 
-        //Foward Pointer
-        if(auxDir != NULL) {
-            if (auxDir->dir == NULL && auxDir->esq != NULL) {
-                nodeCopia->dir = auxDir->esq;
+        if(nodeDir != NULL) {
+            if (nodeDir->dir == NULL && nodeDir->esq != NULL) {
+                nodeCopia->dir = nodeDir->esq;
             } else {
-                node nodeCopiaDir = alocarNode(auxDir->tipo);
-                nodeCopiaDir->esq = auxDir->esq;
-                nodeCopiaDir->dir = auxDir->dir;
-                auxDir->esq = nodeCopiaDir;
-                auxDir->dir = NULL;
-                nodeCopia->esq = nodeCopiaDir;
+                nodeCopia->dir = copiarNode(nodeDir);
             }
         }
+
         copyPointer++;
     }
 
