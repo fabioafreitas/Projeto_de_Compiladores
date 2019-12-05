@@ -53,7 +53,12 @@ void compilarConstruirAlgoritmo(int algoritmo) {
     system("@..\\scripts\\main >> ..\\scripts\\analytics.txt");
 }
 
-void analiseDesempenhoAlgoritmo(int algoritmo) {
+/**
+ * 1 = MarkScan
+ * 2 = FenichelYochelson
+ * 3 = Cheney
+ */
+ void analiseDesempenhoAlgoritmo(int algoritmo) {
     float tempoMedio = 0;
     int chamadas, i, iteracoes = 5;
     for(i=0;i<iteracoes;i++) {

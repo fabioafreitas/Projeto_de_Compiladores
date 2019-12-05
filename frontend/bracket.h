@@ -88,9 +88,11 @@ void achaArgumento(char* array1, int* p) {
     *p = c;
 }
 
+int bracketMaisInterno(char* lambda);
+
 //Retorna o index da variável do bracket mais interno
-//[x]([y]([z]((+x)((+y)z)))) -> retorna 9
-int buscarBracketMaisInterno(char* lambda) {
+//XYZ++xyz -> retorna 9
+int getUltimoBracket(char* lambda) {
 	int i, answer = 0;
 	int len = strlen(lambda);
     for(i = 0; i < len ; i++) {
@@ -99,8 +101,34 @@ int buscarBracketMaisInterno(char* lambda) {
     return answer;
 }
 
+//Recebe um intervalo, uma string origem e uma string destino.
+//Copia o conteudo da string origem no intervalo (inicio, final) dentro da string destino
+void getSubString(char* stringOrigem, char* stringDestino, int inicio, int final) {
+    int i, j = 0;
+    for(i = inicio; i <= final ; i++) {
+        stringDestino[j++] = stringOrigem[i];
+    }
+    stringDestino[j] = '\0';
+}
+
+//Copia a stringCopiar na StringInserir a partir do index de entrada
+void inserirSubString(char* stringInserir, char* stringCopiar, int index) {
+    int i, j = 0;
+    char aux[strlen(stringInserir)];
+    for (i = index; stringInserir[i] != '\0' ; i++) {
+        aux[j++] = stringInserir[i];
+    }
+    aux[j] = '\0';
+    for (i = index, j = 0; stringCopiar[j] != '\0'; i++) {
+        stringInserir[i] = stringCopiar[j++];
+    }
+    for (j = 0; aux[j] != '\0' ; i++) {
+        stringInserir[i] = aux[j++];
+    }
+}
+
 //Conta a quantidade de argumentos de uma expressão lambda a partir de um index de entrada
-int contaArgumentos(char* lambda, int index) {
+int contarArgumentos(char* lambda, int index) {
     int numArgs = 0;
     while(lambda[index] != '\0' && lambda[index] != ')') {
         numArgs++;
@@ -109,67 +137,101 @@ int contaArgumentos(char* lambda, int index) {
     return numArgs;
 }
 
-//faz uma cópia da stringOrigem na stringDestino a partir de um intervalo inicio e fim
-void copiarSubstring(char* stringOrigem, char* stringDestino, int inicio, int final) {
-    int i, j = 0;
-    for(i = inicio; i <= final ; i++) {
-        stringDestino[j++] = stringOrigem[i];
+//Conta a quantidade de brackets a esquerda de uma expressao lambda
+int contaBracketsAEsquerda(char* lambda) {
+    int i = 0;
+    int count = 0;
+    while(isupper(lambda[i])) {
+        count++;
+        i++;
     }
-    stringDestino[j] = '\0';
+    return count;
 }
 
-//Currifica os argumentos de uma expressão lambda
-//Y+xy -> Y(+x)y
-//Abcde -> A(bcd)e
-void currificarExpressaoLambda(char* lambda) {
-    int numArgs = contaArgumentos(lambda, 1);
-    int i, indexUltimoArg = 1;
-    for(i = 0 ; i < numArgs-1 ; i++) {
-        achaArgumento(lambda, &indexUltimoArg);
-    }
-    inserirParenteses(lambda, 1, indexUltimoArg);
-}
-
-void bracketAbstractionAlgorithm(char* lambda) {
-
-    //Preprocessando e currificando
-    char stringAux[SIZE];
-    int bracketMaisInterno =  buscarBracketMaisInterno(lambda);
-    int finalStringLambda;
-    finalStringLambda = strlen(lambda) - 1;
-    copiarSubstring(lambda, stringAux, bracketMaisInterno, finalStringLambda);
-    int numArgs = contaArgumentos(stringAux, 1);
+//Recebe uma expressao lambda que possui apenas 1 bracket a esquerda
+//Recebe uma expressao lambda e a currifica
+//X+xy -> X(+x)y
+void currificar(char* lambda) {
+    int numArgs = contarArgumentos(lambda, 1);
     if(numArgs > 2) {
-        currificarExpressaoLambda(stringAux);
+        int i, indexUltimoArg = 1;
+        for(i = 0 ; i < numArgs-1 ; i++) {
+            achaArgumento(lambda, &indexUltimoArg);
+        }
+        inserirParenteses(lambda, 1, indexUltimoArg);
+    }
+}
+
+//Recebe uma expressao lambda que possui apenas 1 bracket a esquerda
+//Avalia se seus argumentos sao constantes em relacao ao bracket a esquerda
+//Retorna 1 se os argumentos sao constantes e 0 caso nao sejam
+int avaliarArgumentos(char* lambda) {
+    char bracketLowerCase = tolower(lambda[0]);
+    int i;
+    for (i = 1; lambda[i] != '\0'; i++) {
+        if(lambda[i] == bracketLowerCase)
+            return 0;
+    }
+    return 1;
+}
+
+//Checa se a expressao esta reduzida, ou seja, se nao há mais brackets
+int expressaoLambdaReduzida(char* lambda) {
+    int i;
+    for (i = 0; i < strlen(lambda); i++) {
+        if(isupper(lambda[i])) return 0;
+    }
+    return 1;
+}
+
+//Recebe uma expressao lambda que possui apenas 1 bracket a esquerda
+//Estou presumindo que a entrada ja esta no formado de entrada, nao faço validaçoes
+void bracketCasoBase(char* lambda) {
+    int numeroArgumentos = contarArgumentos(lambda, 1);
+    if(numeroArgumentos > 2) {
+        currificar(lambda);
     }
 
     //Buscando argumentos
     int A, nA, B, nB;
     int n = 1;
-    A = n;
-    achaArgumento(stringAux, &n);
-    nA = n-1;
-    B = n;
-    achaArgumento(stringAux, &n);
-    nB = n-1;
+    A = n; achaArgumento(lambda, &n); nA = n-1;
+    B = n; achaArgumento(lambda, &n); nB = n-1;
 
-    //Convertendo esta expressão
-
-    if(A == nA) {
-
+    int argumentosConstantes = avaliarArgumentos(lambda);
+    if(argumentosConstantes) {
+        // TODO Converter para K
+    } else {
+        // TODO Converter para S
     }
+
+}
+
+//Converte a expressao lambda do parametro para uma expressao e logica combinatorial
+void bracket(char* lambda) {
+    //checo se a expressao ja esta reduzida
+    if(expressaoLambdaReduzida(lambda)) {
+        return;
+    }
+
+    //Checo se a expressao esta no caso base (Apenas um bracket a esquerda)
+    int numeroBracketsEsquerda = contaBracketsAEsquerda(lambda);
+    if(numeroBracketsEsquerda == 1) {
+        bracketCasoBase(lambda);
+        return;
+    }
+
+    //Expressao com muitos brackets a esquerda
+    char lambdaAux[SIZE];
+    int ultimoBracket = getUltimoBracket(lambda);           // Index do bracket mais interno
+    int final = strlen(lambda) - 1;                         // Index do ultimo character da expressao lambda
+    getSubString(lambda, lambdaAux, ultimoBracket, final);  // Copiando a expressao do caso base em lambdaAux
+
+    bracket(lambdaAux);                                     // Chamada recursiva para resolver a expressao mais interna
+    int penultimoBracket = ultimoBracket-1;                 // Index do bracket anterior ao mais interno
+    inserirSubString(lambda, lambdaAux, penultimoBracket);  // Copiando lambdaAux de volta na expressoa lambda
+    bracket(lambda);                                        // Chamada recursiva para resolver o restante da expressao
+
+    //TODO a ideia é que essa ultima chamada recursiva esbarre no PRIMEIRO IF quando todos os brackets forem resolvidos
 }
 #endif //PCOMPILADORES_BRACKET_H
-
-//XY+xy         busco o bracket mais interno
-//XY+xy         checo a quantidade de argumentos. se mais de 2, currifico
-//XY(+x)y
-
-
-
-
-//XY(+x)y
-//XS(Y+x)(Yy)
-//XS(Y+x)(Yy)
-//XS(Y+x)(Yy)
-//XS()()
