@@ -191,7 +191,6 @@ void reduzF(node grafo) {
     aux->esq = arroba1;
 }
 
-//TODO otimizar redução de grafo (ideias: pilha/lista encadeada)
 void reduzirGrafo(node grafo) {
     while(grafo->esq->tipo == '@') {
         //printGrafo(grafo);

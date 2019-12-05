@@ -184,6 +184,26 @@ int expressaoLambdaReduzida(char* lambda) {
     return 1;
 }
 
+void converterK(char* lambda) {
+    inserirParenteses(lambda,1, strlen(lambda));
+    lambda[0] = 'K';
+}
+
+void converterS(char* lambda) {
+    //Buscando argumentos
+    int A, nA, B, nB;
+    int n = 1;
+    A = n; achaArgumento(lambda, &n); nA = n-1;
+    B = n; achaArgumento(lambda, &n); nB = n-1;
+
+    //TODO
+}
+
+void converterI(char* lambda) {
+    lambda[0] = 'I';
+    lambda[1] = '\0';
+}
+
 //Recebe uma expressao lambda que possui apenas 1 bracket a esquerda
 //Estou presumindo que a entrada ja esta no formado de entrada, nao faço validaçoes
 void bracketCasoBase(char* lambda) {
@@ -192,19 +212,16 @@ void bracketCasoBase(char* lambda) {
         currificar(lambda);
     }
 
-    //Buscando argumentos
-    int A, nA, B, nB;
-    int n = 1;
-    A = n; achaArgumento(lambda, &n); nA = n-1;
-    B = n; achaArgumento(lambda, &n); nB = n-1;
-
-    int argumentosConstantes = avaliarArgumentos(lambda);
-    if(argumentosConstantes) {
-        // TODO Converter para K
-    } else {
-        // TODO Converter para S
+    if(strlen(lambda)==2) {
+        converterI(lambda);
+        return;
     }
 
+    int argumentosConstantes = avaliarArgumentos(lambda);
+    if(argumentosConstantes)
+        converterK(lambda);
+    else
+        converterS(lambda);
 }
 
 //Converte a expressao lambda do parametro para uma expressao e logica combinatorial

@@ -4,11 +4,12 @@
 #include "frontend/main.c"
 
 
-static char aux[100] = "Yxxx\0";
+static char aux[100] = "Y+xz\0";
 int main(int n, char* args[]) {
 
     printf("%s", aux);
-    inserirParenteses(aux,1, strlen(aux) );
+    currificar(aux);
+    converterK(aux);
     printf("\n%s", aux);
     return 0;
 }
