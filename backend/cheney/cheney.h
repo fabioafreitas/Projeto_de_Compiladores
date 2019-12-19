@@ -31,7 +31,7 @@
 #define N 10000000
 
 //TAMANHO DA HEAP
-#define H 111000000
+#define H 10000
 
 typedef struct reg {
     int tipo;

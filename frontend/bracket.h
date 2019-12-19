@@ -1,7 +1,3 @@
-//
-//ESTE CÓDIGO FOI CRIADO POR LUCAS CORREIA (https://github.com/LucasFranciscoCorreia)
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -706,7 +702,7 @@ char bate(char *fun, char *str)
 
 /*
 * Procedimento efetua alpha conversao da string retornada
-* pelo lex-yacc. Onde char *fun e o identificador da
+* pelo frontend. Onde char *fun e o identificador da
 * funcao.
 */
 
@@ -814,13 +810,4 @@ char *converter_para_bracket(char *fun, char *str, char *valor)
     strcpy(res, string);
     res[tam] = '\0';
     return res;
-}
-
-//Apenas função para testar o algoritmo de lucas
-void testeBracket() {
-    char func[T] = "[y][x](<x2)x(+(y(-x1))(y(-x2)))";
-    remove_parenteses_redundante(func);
-    logica_combinatorial(func);
-    remove_parenteses_redundante(func);
-    printf("%s\n", func);
 }
