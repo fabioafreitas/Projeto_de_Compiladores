@@ -28,7 +28,7 @@ A linguagem é bem simples, apenas reconhece funções com um parâmetro.
 Definição de uma função:
 ```
 sucessor(x) = x+1
-triplo(n) = n*2
+triplo(n) = n*3
 fibonacci(y) = if y < 2 then y else fib(y-1) + fib(y-2)
 fatorial(k) = if k = 0 then 1 else x * fatorial(k-1)
 ```
